@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Admin\SourceService;
 use Illuminate\Http\Request;
 
+
 class SourceController extends Controller
 {
 
@@ -34,13 +35,12 @@ class SourceController extends Controller
 
     public function store(Request $request)
     {
-
-        $request->validate($request->all(), [
+        $this->validate($request, [
             'name' => 'required|string',
             'avatar' => 'nullable|image|max:204800',
             'source' => 'required|file|mimes:zip,rar',
         ]);
-        dd($request->all());
+
         $result = $this->service->store($request->all(), $msg);
         if (!$result) {
             return response_error($msg);
@@ -58,8 +58,14 @@ class SourceController extends Controller
 
     }
 
-    public function destroy()
+    public function destroy($id)
     {
+        $source =  $this->service->repo()->findById($id);
+        if (!$source) {
+            return response_error('Không tìm thấy thông tin source mẫu');
+        }
+        $source->delete();
 
+        return response_success('Xóa source mẫu thành công');
     }
 }

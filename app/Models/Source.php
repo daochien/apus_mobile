@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\FileHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -33,6 +34,11 @@ class Source extends Model
             $model->code = strtoupper(Hashids::encode($model->id));
             $model->save();
         });
+    }
+
+    public function getAvatarAttribute($value)
+    {
+        return !empty($value) ? FileHelper::getLink($value, "/images/") : '';
     }
 
 }

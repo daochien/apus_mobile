@@ -9,16 +9,16 @@ use Illuminate\Support\Facades\URL;
 class FileHelper
 {
     public static function writeFile($data, $fileName, $uploadDir = "/json/")
-    {        
-        
-        if (!File::exists($uploadDir)) {            
+    {
+
+        if (!File::exists($uploadDir)) {
             File::makeDirectory($uploadDir, 0777, true, true);
         }
         $uploadPath = storage_path("app/public{$uploadDir}"); // Thư mục upload
-        
+
         $fullPath = $uploadDir.$fileName;
-        
-        if(Storage::disk('public')->put($fullPath, json_encode($data))) {            
+
+        if(Storage::disk('public')->put($fullPath, json_encode($data))) {
             return route('translation.download', ['file_name' => $fullPath]);
         }
         return false;
@@ -70,7 +70,7 @@ class FileHelper
     public static function getLink($fileName, $folder)
     {
         $folder = env('APP_PHOTO_DIR', $folder);
-        
+
         return URL::to("/storage{$folder}{$fileName}");
     }
 

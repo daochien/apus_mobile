@@ -41,13 +41,13 @@
                                 <input
                                     type="file"
                                     @change="onSelectSourceFile($event)"
-                                    :class="['form-control', {'is-invalid': form.errors.has('file') }]"
+                                    :class="['form-control', {'is-invalid': form.errors.has('source') }]"
                                     id="icon"
                                     placeholder="Icon"
                                     accept=".zip,.rar"
                                     ref="fileupload"
                                 />
-                                <has-error :form="form" field="file"></has-error>
+                                <has-error :form="form" field="source"></has-error>
                             </div>
 
                         </div>
@@ -97,7 +97,6 @@
 </template>
 <script>
 
-
 const img_link ="/images/no_image.jpg";
 
 export default {
@@ -107,7 +106,7 @@ export default {
             form: new Form({
                 name: '',
                 avatar: '',
-                file: '',
+                source: '',
                 desc: '',
                 status: 1,
             }),
@@ -149,12 +148,12 @@ export default {
 
                 if (!files.length) return;
                 if (/\.(zip|rar)$/i.test(files[0].name)) {
-                    this.form.file = files[0];
+                    this.form.source = files[0];
                     //this.imageSharePreview = URL.createObjectURL(files[0]);
                 } else {
-                    this.form.file = "";
+                    this.form.source = "";
                     if (!this.isEdit) {
-                        this.form.imageSharePreview = "";
+                        this.form.imageSharePreview = img_link;
                     }
                     Toast.fire({
                         icon: "error",

@@ -143,7 +143,7 @@
 </a>
 <!-- global js -->
 <script src="{{ asset('js/admin.js') }}" type="text/javascript"></script>
-<script src="{{ mix('js/app.js') }}" type="text/javascript"></script>
+<script src="{{ mix('js/admin/app.js') }}" type="text/javascript"></script>
 @yield('footer_scripts')
 </body>
 </html>
