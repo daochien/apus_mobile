@@ -15,7 +15,7 @@ class CreateSourcesTable extends Migration
     {
         Schema::create('sources', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 20)->unique();
+            $table->string('code', 20)->nullable()->unique();
             $table->string('name');
             $table->string('avatar', 300)->nullable();
             $table->string('path');
