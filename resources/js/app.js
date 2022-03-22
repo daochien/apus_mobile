@@ -45,6 +45,11 @@ Vue.use(VueProgressBar, {
 
 Vue.component('pagination', require('laravel-vue-pagination'));
 
+import InputTag from 'vue-input-tag';
+
+Vue.component('input-tag', InputTag);
+
+
 const app = new Vue({
     el: '#app'
 });

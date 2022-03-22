@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Helpers\FileHelper;
+use App\Models\SourceConfig;
 use App\Repositories\Source\SourceRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use ZanySoft\Zip\Zip;
@@ -39,13 +40,13 @@ class SourceService
         try {
 
             $source = $this->sourceRepo->store($attributes);
-
+            $this->_storeConfigs($source->id, $attributes['configs']);
             if (!empty($attributes['avatar'])) {
                 $file = $attributes['avatar'];
                 $image = $this->fileHelper->saveFile($file, $file->getClientOriginalName(), '/images/');
 
                 if (!$image) {
-                    return false;
+                    throw new \Exception('Upload ảnh đại diện thất bại');
                 }
 
                 $source->avatar = $image;
@@ -57,7 +58,7 @@ class SourceService
                 $path = $this->fileHelper->saveFile($file, $fileName, '/sources/');
 
                 if (!$path) {
-                    return false;
+                    throw new \Exception('Upload file thất bại');
                 }
 
                 $source->path = $path;
@@ -72,9 +73,30 @@ class SourceService
         } catch (\Exception $e) {
             DB::rollBack();
             $msg = $e->getMessage();
-            dd($e);
             return false;
         }
+    }
+
+    protected function _storeConfigs($sourceId, $configs)
+    {
+        if (empty($configs)) {
+            return false;
+        }
+        $dataInserts = [];
+        foreach ($configs as $config) {
+            $insert['source_id'] = $sourceId;
+            $insert['key'] = $config['key'];
+            $insert['type'] = $config['type'];
+            $insert['is_edit'] = !empty($config['is_edit']) ?? 0;
+            if (in_array($config['type'], ['radio', 'checkbox'])) {
+                $insert['value'] = json_encode($config['value']);
+            } else {
+                $insert['value'] = $config['value'];
+            }
+            $dataInserts[] = $insert;
+        }
+
+        return SourceConfig::query()->insert($dataInserts);
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Source\StoreRequest;
 use App\Services\Admin\SourceService;
 use Illuminate\Http\Request;
 
@@ -33,13 +34,8 @@ class SourceController extends Controller
         return view('admin.source.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required|string',
-            'avatar' => 'nullable|image|max:204800',
-            'source' => 'required|file|mimes:zip,rar',
-        ]);
 
         $result = $this->service->store($request->all(), $msg);
         if (!$result) {

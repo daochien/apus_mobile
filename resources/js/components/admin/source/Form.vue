@@ -19,7 +19,80 @@
                         <textarea rows="5" v-model="form.desc" :class="['form-control', { 'is-invalid': form.errors.has('desc') }]"></textarea>
                         <has-error :form="form" field="desc"></has-error>
                     </div>
+                    <div class="row" v-for="(config, index) in configs" :key="index">
+                        <div class="form-group col-md-3">
+                            <label for="input">Key</label>
+                            <input v-model="config.key" :class="['form-control']">
+<!--                            <has-error :form="form" field="name"></has-error>-->
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="input">Type(*)</label>
+                            <select v-model="config.type" :class="['form-control']">
+                                <option value="">--Chọn--</option>
+                                <option value="string">String</option>
+                                <option value="number">Number</option>
+                                <option value="radio">Radio</option>
+                                <option value="checkbox">Checkbox</option>
+                                <option value="file">File</option>
+                            </select>
+<!--                            <has-error :form="form" field="group_gift_id"></has-error>-->
+                        </div>
+                        <template v-if="config.type === 'string'">
+                            <div class="form-group col-md-3">
+                                <label for="input">Value</label>
+                                <input v-model="config.value" :class="['form-control']">
+                                <!--<has-error :form="form" field="name"></has-error>-->
+                            </div>
+                        </template>
+                        <template v-else-if="config.type === 'number'">
+                            <div class="form-group col-md-3">
+                                <label for="input">Value</label>
+                                <input type="number" v-model="config.value" :class="['form-control']">
+                                <!--<has-error :form="form" field="name"></has-error>-->
+                            </div>
+                        </template>
 
+                        <template v-else-if="config.type === 'file'">
+                            <div class="form-group col-md-3">
+                                <label for="input">Value</label>
+                                <input type="file" :class="['form-control']" @change="onSelectConfigFile($event, index)">
+                                <!--<has-error :form="form" field="name"></has-error>-->
+                            </div>
+                        </template>
+
+                        <template v-else>
+                            <div class="form-group col-md-3">
+                                <label for="input">Value</label>
+                                <input-tag placeholder="Enter..." v-model="config.value" :limit="10"></input-tag>
+                                <!--<has-error :form="form" field="name"></has-error>-->
+                            </div>
+                        </template>
+
+                        <div class="form-group col-md-2">
+                            <label for="input">Cho phép sửa</label>
+                            <div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio":value="true" v-model="config.is_edit">
+                                    <label class="form-check-label" :for="`is_edit_${index}`">Có</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" :value="false" v-model="config.is_edit">
+                                    <label class="form-check-label" :for="`is_edit_${index}`">Không</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="input">Action</label>
+                            <div>
+                                <button class="btn btn-sm btn-danger" @click="removeConfig(index)">Xóa</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-info" @click="addConfig()">Thêm config</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,7 +117,7 @@
                                     :class="['form-control', {'is-invalid': form.errors.has('source') }]"
                                     id="icon"
                                     placeholder="Icon"
-                                    accept=".zip,.rar"
+                                    accept=".zip"
                                     ref="fileupload"
                                 />
                                 <has-error :form="form" field="source"></has-error>
@@ -109,9 +182,22 @@ export default {
                 source: '',
                 desc: '',
                 status: 1,
+                configs: []
+            }),
+            formUpload: new Form({
+               file: ''
             }),
             avatarPreview: img_link,
-            imageSharePreview: img_link
+            imageSharePreview: img_link,
+            configs: [
+                {
+                    'id': '',
+                    'key': '',
+                    'type': 'string',
+                    'value': '',
+                    'is_edit': 1
+                }
+            ]
         }
     },
     created () {
@@ -120,7 +206,57 @@ export default {
         }
     },
     methods: {
+        addConfig () {
+            this.configs.push({
+                'id': '',
+                'key': '',
+                'type': 'string',
+                'value': '',
+                'is_edit': true
+            });
+        },
+        removeConfig(index) {
+            this.configs.splice(index, 1);
+        },
+        onSelectConfigFile (e, index) {
+            try {
+                let files = e.target.files || e.dataTransfer.files;
 
+                if (!files.length) return;
+
+                if (/\.(jpe?g|png|gif)$/i.test(files[0].name)) {
+                    this.formUpload.file = files[0];
+                    this.formUpload.submit('post','/admin/common/upload', {
+                        transformRequest: [function (data, headers) {
+                            return window.objectToFormData.serialize(data)
+                        }],
+                    })
+                    .then(({data}) => {
+                        if (data.status) {
+                            this.configs[index].value = data.data.file_name;
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: data.message
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Lỗi hệ thống'
+                        });
+                    })
+                } else {
+                    this.configs[index].value = "";
+
+                    Toast.fire({
+                        icon: "error",
+                        title: "Image not valid",
+                    });
+                }
+            } catch (error) {}
+        },
         onSelectImageAvatar (e) {
             try {
                 let files = e.target.files || e.dataTransfer.files;
@@ -147,7 +283,7 @@ export default {
                 let files = e.target.files || e.dataTransfer.files;
 
                 if (!files.length) return;
-                if (/\.(zip|rar)$/i.test(files[0].name)) {
+                if (/\.(zip)$/i.test(files[0].name)) {
                     this.form.source = files[0];
                     //this.imageSharePreview = URL.createObjectURL(files[0]);
                 } else {
@@ -164,6 +300,7 @@ export default {
         },
 
         saveForm () {
+            this.form.configs = JSON.stringify(this.configs);
             this.form.submit('post', '/admin/sources', {
                 transformRequest: [function (data, headers) {
                     return window.objectToFormData.serialize(data)
