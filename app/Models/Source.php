@@ -41,4 +41,9 @@ class Source extends Model
         return !empty($value) ? FileHelper::getLink($value, "/images/") : '';
     }
 
+    public function configs()
+    {
+        return $this->hasMany(SourceConfig::class, 'source_id');
+    }
+
 }

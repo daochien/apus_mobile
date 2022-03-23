@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Source\StoreRequest;
+use App\Http\Requests\Admin\Source\UpdateRequest;
 use App\Services\Admin\SourceService;
 use Illuminate\Http\Request;
 
@@ -44,14 +45,26 @@ class SourceController extends Controller
         return response_success('success', $result);
     }
 
-    public function edit()
+    public function edit(Request $request, $id)
     {
+        $source = $this->service->repo()->findById($id);
+        if (!$source) {
+            return response_error('Không tìm thấy thông tin source mẫu');
+        }
 
+        $source->load('configs');
+
+        return view('admin.source.edit', compact('source'));
     }
 
-    public function update()
+    public function update(UpdateRequest $request, $id)
     {
+        $update = $this->service->update($id, $request->all());
+        if (!$update) {
+            return response_error('Cập nhật source mẫu không thành công');
+        }
 
+        return response_success('success');
     }
 
     public function destroy($id)

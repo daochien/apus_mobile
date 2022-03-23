@@ -173,7 +173,7 @@
 const img_link ="/images/no_image.jpg";
 
 export default {
-    props: ['editModel'],
+    props: ['editModel', 'source'],
     data () {
         return {
             form: new Form({
@@ -195,14 +195,14 @@ export default {
                     'key': '',
                     'type': 'string',
                     'value': '',
-                    'is_edit': 1
+                    'is_edit': true
                 }
             ]
         }
     },
     created () {
         if (this.editModel) {
-            this.loadEdit(this.gift);
+            this.loadEdit(this.source);
         }
     },
     methods: {
@@ -310,7 +310,7 @@ export default {
                     if (data.status) {
                         Toast.fire({
                             icon: 'success',
-                            title: 'Tạo mới quà tặng thành công'
+                            title: 'Tạo mới source mẫu thành công'
                         });
                         window.location.href = '/admin/sources';
                     } else {
@@ -327,43 +327,38 @@ export default {
                 });
             })
         },
-        loadEdit (gift) {
+        loadEdit (source) {
             let that = this;
-            this.form.id = gift.id;
-            this.form.group_gift_id = gift.group_gift_id;
-            this.form.name = gift.name;
-            this.form.short_name = gift.short_name;
-            this.form.summary = gift.summary;
-            this.form.type_gift = gift.type_gift;
-            this.form.gift_value = gift.gift_value;
-            this.form.status = gift.status;
-            this.form.is_default = gift.is_default;
-            this.form.is_send_noti = gift.is_send_noti;
-            this.form.action_id = gift.action_id;
-            this.form.index = gift.index;
-            this.form.minimum = gift.minimum;
-            if (gift.is_send_noti == 1) {
-                let notification = JSON.parse(gift.notification);
-                this.form.notification.title = notification.title;
-                this.form.notification.message = notification.message;
+            this.form.id = source.id;
+            this.form.name = source.name;
+            this.form.desc = source.desc;
+            this.form.status = source.status;
+            this.avatarPreview = source.avatar ? source.avatar : img_link;
+            if (source.configs.length > 0) {
+                this.configs = [];
+                source.configs.forEach((item) => {
+                    let value = '';
+                    if (item.type === 'radio' || item.type === 'checkbox') {
+                        value = JSON.parse(item.value);
+                    } else if (item.type === 'file') {
+                        value = '';
+                    } else {
+                        value = item.value;
+                    }
+                    that.configs.push({
+                        'id': item.id,
+                        'key': item.key,
+                        'type': item.type,
+                        'value': value,
+                        'is_edit': item.is_edit == 1? true: false
+                    })
+                })
             }
-            this.avatarPreview = gift.image_avatar ? gift.image_avatar : img_link;
-            this.imageSharePreview = gift.image_share ? gift.image_share : img_link;
-            this.imageShareMiss = gift.image_miss ? gift.image_miss : img_link;
-            this.groups.forEach((item) => {
-                if (item.id === gift.group_gift_id) {
-                    that.groupSelected = item;
-                }
-            })
-            if (gift.type_user & 1) {
-                this.form.type_user.push(1)
-            }
-            if (gift.type_user & 2) {
-                this.form.type_user.push(2)
-            }
+
         },
         edit (id) {
-            this.form.submit('post', '/admin/gift/update/'+id, {
+            this.form.configs = JSON.stringify(this.configs);
+            this.form.submit('post', '/admin/sources/'+id, {
                 transformRequest: [function (data, headers) {
                     return window.objectToFormData.serialize(data)
                 }],
@@ -377,7 +372,7 @@ export default {
                     });
 
                     if (data.status)
-                        window.location.href = '/admin/gift';
+                        window.location.href = '/admin/sources';
 
                 }).catch((error) => {
                 Toast.fire({
