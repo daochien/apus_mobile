@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\FileHelper;
+use App\Models\SourceConfig;
 use Illuminate\Http\Request;
 
 class CommonController extends Controller
@@ -15,12 +16,12 @@ class CommonController extends Controller
     {
         if (!empty($request->has('file'))) {
             $file = $request->file('file');
-            $image = FileHelper::saveFile($file, $file->getClientOriginalName(), '/source/configs/file/');
+            $image = FileHelper::saveFile($file, $file->getClientOriginalName(), SourceConfig::DIR_UPLOAD_FILE);
             if (!$image) {
                 return response_error('Upload file thất bại');
             }
             return response_success('success', [
-                'path' => FileHelper::getLink($image, '/source/configs/file/'),
+                'path' => FileHelper::getLink($image, SourceConfig::DIR_UPLOAD_FILE),
                 'file_name' => $image
             ]);
         }

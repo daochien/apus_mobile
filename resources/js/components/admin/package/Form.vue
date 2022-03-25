@@ -1,0 +1,229 @@
+<template>
+    <div class="row justify-content-center">
+        <div class="col-md-12 text-right" style="margin-bottom: 10px;">
+            <a href="/admin/packages" class="btn btn-responsive btn-warning">Hủy bỏ</a>
+            <button @click.prevent="edit(form.id)" v-if="editModel" type="submit" class="btn btn-responsive btn-info">Cập nhật</button>
+            <button @click.prevent="saveForm()" v-else class="btn btn-responsive btn-primary">Tạo mới</button>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="input">Chọn source mẫu(*)</label>
+                        <select v-model="form.source_id" :class="['form-control', { 'is-invalid': form.errors.has('source_id') }]">
+                            <option value="">--Chọn--</option>
+                            <option v-for="(item, index) in sources" :value="item.id" :key="index">{{ item.name }}</option>
+                        </select>
+                        <has-error :form="form" field="source_id"></has-error>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input">Tên gói(*)</label>
+                        <input v-model="form.name" :class="['form-control', { 'is-invalid': form.errors.has('name') }]">
+                        <has-error :form="form" field="name"></has-error>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input">Mô tả</label>
+                        <textarea rows="5" v-model="form.desc" :class="['form-control', { 'is-invalid': form.errors.has('desc') }]"></textarea>
+                        <has-error :form="form" field="desc"></has-error>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="input">Giá bán(*)</label>
+                        <input type="number" v-model="form.price" :class="['form-control', { 'is-invalid': form.errors.has('price') }]">
+                        <has-error :form="form" field="price"></has-error>
+                    </div>
+                    <div class="form-group">
+                        <label for="input">Ảnh đại diện</label>
+                        <div data-v-65473a7c="" class="d-flex justify-content-start">
+
+                            <img
+                                :src="avatarPreview"
+                                style="border: 1px solid"
+                                width="100"
+                                height="100"
+                            />
+                            <div data-v-65473a7c="" class="d-flex align-items-center ml-3">
+                                <input
+                                    type="file"
+                                    @change="onSelectImageAvatar($event)"
+                                    :class="['form-control', {'is-invalid': form.errors.has('avatar') }]"
+                                    id="icon"
+                                    placeholder="Icon"
+                                    accept="image/*"
+                                    ref="fileupload"
+                                />
+                                <has-error :form="form" field="avatar"></has-error>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input">Trạng thái</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" v-model="form.status" id="status1" value="1">
+                                <label class="form-check-label" for="status1">Activce</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" v-model="form.status" id="status2" value="0">
+                                <label class="form-check-label" for="status2">InActive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+
+const img_link ="/images/no_image.jpg";
+
+export default {
+    props: ['editModel', 'sources'],
+    data () {
+        return {
+            form: new Form({
+                name: '',
+                avatar: '',
+                source_id: '',
+                desc: '',
+                status: 1,
+                price: '',
+                configs: []
+            }),
+
+            avatarPreview: img_link,
+            configs: [
+                {
+                    'id': '',
+                    'key': '',
+                    'type': 'string',
+                    'value': '',
+                    'is_edit': true
+                }
+            ]
+        }
+    },
+    created () {
+        if (this.editModel) {
+            this.loadEdit(this.source);
+        }
+    },
+    methods: {
+
+        onSelectImageAvatar (e) {
+            try {
+                let files = e.target.files || e.dataTransfer.files;
+
+                if (!files.length) return;
+                if (/\.(jpe?g|png|gif)$/i.test(files[0].name)) {
+                    this.form.avatar = files[0];
+                    this.avatarPreview = URL.createObjectURL(files[0]);
+                } else {
+                    this.form.avatar = "";
+                    if (!this.isEdit) {
+                        this.form.avatarPreview = "";
+                    }
+                    Toast.fire({
+                        icon: "error",
+                        title: "Image not valid",
+                    });
+                }
+            } catch (error) {}
+        },
+
+        saveForm () {
+            this.form.configs = JSON.stringify(this.configs);
+            this.form.submit('post', '/admin/packages', {
+                transformRequest: [function (data, headers) {
+                    return window.objectToFormData.serialize(data)
+                }],
+            })
+                .then(({data}) => {
+                    if (data.status) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Tạo mới source mẫu thành công'
+                        });
+                        window.location.href = '/admin/packages';
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: data.message
+                        });
+                    }
+
+                }).catch((error) => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Lỗi hệ thống'
+                });
+            })
+        },
+        loadEdit (source) {
+            let that = this;
+            this.form.id = source.id;
+            this.form.name = source.name;
+            this.form.desc = source.desc;
+            this.form.status = source.status;
+            this.avatarPreview = source.avatar ? source.avatar : img_link;
+            if (source.configs.length > 0) {
+                this.configs = [];
+                source.configs.forEach((item) => {
+                    let value = '';
+                    if (item.type === 'radio' || item.type === 'checkbox') {
+                        value = JSON.parse(item.value);
+                    } else if (item.type === 'file') {
+                        value = '';
+                    } else {
+                        value = item.value;
+                    }
+                    that.configs.push({
+                        'id': item.id,
+                        'key': item.key,
+                        'type': item.type,
+                        'value': value,
+                        'is_edit': item.is_edit == 1? true: false
+                    })
+                })
+            }
+
+        },
+        edit (id) {
+            this.form.configs = JSON.stringify(this.configs);
+            this.form.submit('post', '/admin/packages/'+id, {
+                transformRequest: [function (data, headers) {
+                    return window.objectToFormData.serialize(data)
+                }],
+            })
+                .then(({data}) => {
+                    let status = data.status ? 'success': 'error';
+
+                    Toast.fire({
+                        icon: status,
+                        title: data.message
+                    });
+
+                    if (data.status)
+                        window.location.href = '/admin/packages';
+
+                }).catch((error) => {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Lỗi hệ thống'
+                });
+            })
+        }
+    }
+}
+</script>

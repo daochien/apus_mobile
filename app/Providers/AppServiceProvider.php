@@ -2,15 +2,18 @@
 
 namespace App\Providers;
 
+use App\Repositories\Package\PackageRepository;
 use App\Repositories\Source\SourceRepository;
+use App\Repositories\Package\PackageRepositoryInterface;
 use App\Repositories\Source\SourceRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
 
-    protected $services = [
+    protected array $services = [
         SourceRepositoryInterface::class => SourceRepository::class,
+        PackageRepositoryInterface::class => PackageRepository::class,
     ];
 
     /**

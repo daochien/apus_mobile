@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Repositories\Source;
+namespace App\Repositories\Package;
 
-use App\Models\Source;
+use App\Models\Package;
 use App\Repositories\BaseRepository;
 
-class SourceRepository extends BaseRepository implements PackageRepositoryInterface
+class PackageRepository extends BaseRepository implements PackageRepositoryInterface
 {
-    public function __construct(Source $model)
+    public function __construct(Package $model)
     {
         parent::__construct($model);
     }

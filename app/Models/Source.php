@@ -12,6 +12,10 @@ class Source extends Model
 {
     use HasFactory, SoftDeletes;
 
+    CONST DIR_UPLOAD_SOURCE = 'app/public/sources/';
+
+    CONST DIR_UPLOAD_IMAGE = 'app/public/images/';
+
     protected $table = 'sources';
 
     protected $fillable = [

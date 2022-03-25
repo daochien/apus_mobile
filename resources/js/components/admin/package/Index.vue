@@ -8,7 +8,7 @@
                             Danh sách souce mẫu
                         </div>
                         <div class="col-md-4 text-right" >
-                            <a class="btn btn-primary" href="/admin/sources/create">Tạo mới</a>
+                            <a class="btn btn-primary" href="/admin/packages/create">Tạo mới</a>
                         </div>
                     </div>
                 </div>
@@ -21,8 +21,8 @@
                                 <th class="border-top-0" scope="col">STT</th>
                                 <th class="border-top-0" scope="col">Ảnh dại diện</th>
                                 <th class="border-top-0" scope="col">Code</th>
-                                <th class="border-top-0" scope="col">Tên source</th>
-                                <th class="border-top-0" scope="col">Path</th>
+                                <th class="border-top-0" scope="col">Tên</th>
+                                <th class="border-top-0" scope="col">Giá</th>
                                 <th class="border-top-0" scope="col">Trạng thái</th>
                                 <th class="border-top-0" scope="col">Tác vụ</th>
                             </tr>
@@ -41,20 +41,17 @@
                                     {{ item.path }}
                                 </td>
                                 <td>
-                                        <span v-if="item.status" class="label label-sm bg-success text-white mr-1">
-                                            Có
-                                        </span>
+                                    <span v-if="item.status" class="label label-sm bg-success text-white mr-1">
+                                        Có
+                                    </span>
                                     <span v-else class="label label-sm bg-danger text-white mr-1">
-                                            Không
-                                        </span>
+                                        Không
+                                    </span>
                                 </td>
 
                                 <td>
                                     <a :href="`/admin/sources/${item.id}`" type="button" class="btn btn-info btn-sm ">
                                         <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a type="button" class="btn btn-info btn-sm " @click="exportConfig(item.id)">
-                                        <i class="fas fa-file-download"></i>
                                     </a>
                                     <button type="button" class="btn btn-danger btn-sm " @click="destroy(item.id)">
                                         <i class="fas fa-trash-alt"></i>
@@ -76,7 +73,7 @@
 const img_link ="/images/no_image.jpg";
 
 export default {
-    props: ['sources'],
+    props: ['packages'],
     data () {
         return {
             items: {
@@ -86,12 +83,12 @@ export default {
         }
     },
     created () {
-        this.items = this.sources;
+        this.items = this.packages;
     },
     methods: {
         loadData(page = 1) {
             this.pageCurrent = page;
-            axios.get('/admin/sources?page='+page)
+            axios.get('/admin/packages?page='+page)
                 .then(({data}) => {
                     this.items = data.data;
                 })
@@ -107,7 +104,7 @@ export default {
                 cancelButtonText: 'Hủy bỏ',
             }).then((result) => {
                 if (result.value) {
-                    axios.delete('/admin/sources/' + id).then(({data}) => {
+                    axios.delete('/admin/packages/' + id).then(({data}) => {
                         let status = data.status ? 'success': 'error'
                         Toast.fire({
                             icon: status,
@@ -123,32 +120,6 @@ export default {
                 }
             })
         },
-        exportConfig (id) {
-            Swal.fire({
-                title: 'Xuất file config source mẫu',
-                text: 'Bạn có chắc chắn muốn tiếp tục?',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Đồng ý',
-                cancelButtonText: 'Hủy bỏ',
-            }).then((result) => {
-                if (result.value) {
-                    axios.post('/admin/sources/export/' + id).then(({data}) => {
-                        let status = data.status ? 'success': 'error'
-                        Toast.fire({
-                            icon: status,
-                            title: data.message,
-                        });
-                    }).catch((error) => {
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Lỗi hệ thống',
-                        });
-                    });
-                }
-            })
-        }
     }
 }
 </script>

@@ -5,39 +5,48 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Source\StoreRequest;
 use App\Http\Requests\Admin\Source\UpdateRequest;
-use App\Services\Admin\SourceService;
+use App\Models\Source;
+use App\Services\Admin\PackageService;
 use Illuminate\Http\Request;
 
-
-class SourceController extends Controller
+class PackageController extends Controller
 {
 
     protected $service;
 
-    public function __construct(SourceService $service)
+    public function __construct(PackageService $service)
     {
         $this->service = $service;
     }
 
     public function index(Request $request)
-{
-    $sources = $this->service->fetchList($request->all());
+    {
+        $packages = $this->service->fetchList($request->all());
 
-    if ($request->wantsJson()) {
-        return response_success('success', $sources);
+        if ($request->wantsJson()) {
+            return response_success('success', $packages);
+        }
+
+        return view('admin.package.index', compact('packages'));
     }
-
-    return view('admin.source.index', compact('sources'));
-}
 
     public function create(Request $request)
     {
-        return view('admin.source.create');
+
+        $sources = Source::all();
+
+        return view('admin.package.create', compact('sources'));
     }
 
-    public function store(StoreRequest $request)
+    public function store(Request $request)
     {
-
+        $this->validate($request, [
+            'source_id' => 'required|integer',
+            'name' => 'required|string',
+            'price' => 'required|integer',
+            'avatar' => 'nullable|image|max:204800',
+            'desc' => 'nullable|string|max:500'
+        ]);
         $result = $this->service->store($request->all(), $msg);
         if (!$result) {
             return response_error($msg);
@@ -71,19 +80,10 @@ class SourceController extends Controller
     {
         $source =  $this->service->repo()->findById($id);
         if (!$source) {
-            return response_error('Không tìm thấy thông tin source mẫu');
+            return response_error('Không tìm thấy thông tin package');
         }
         $source->delete();
 
-        return response_success('Xóa source mẫu thành công');
-    }
-
-    public function export($id)
-    {
-        $export = $this->service->exportConfig($id, $msg);
-        if (!$export) {
-            return response_error($msg);
-        }
-        return response_success('Xuất file config thành công!');
+        return response_success('Xóa package thành công');
     }
 }

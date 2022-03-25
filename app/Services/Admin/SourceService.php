@@ -3,10 +3,12 @@
 namespace App\Services\Admin;
 
 use App\Helpers\FileHelper;
+use App\Models\Source;
 use App\Models\SourceConfig;
-use App\Repositories\Source\SourceRepositoryInterface;
+use App\Repositories\Source\PackageRepositoryInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use ZanySoft\Zip\Zip;
 
@@ -18,8 +20,8 @@ class SourceService
     protected $fileHelper;
 
     public function __construct(
-        SourceRepositoryInterface $sourceRepo,
-        FileHelper $fileHelper
+        PackageRepositoryInterface $sourceRepo,
+        FileHelper                 $fileHelper
     )
     {
         $this->sourceRepo = $sourceRepo;
@@ -45,7 +47,7 @@ class SourceService
             $this->_storeConfigs($source->id, $attributes['configs']);
             if (!empty($attributes['avatar'])) {
                 $file = $attributes['avatar'];
-                $image = $this->fileHelper->saveFile($file, $file->getClientOriginalName(), '/images/');
+                $image = $this->fileHelper->saveFile($file, $file->getClientOriginalName(), Source::DIR_UPLOAD_IMAGE);
 
                 if (!$image) {
                     throw new \Exception('Upload ảnh đại diện thất bại');
@@ -57,16 +59,16 @@ class SourceService
             if (!empty($attributes['source'])) {
                 $file = $attributes['source'];
                 $fileName = $source->code.'.'.$file->getClientOriginalExtension();
-                $path = $this->fileHelper->saveFile($file, $fileName, '/sources/');
+                $path = $this->fileHelper->saveFile($file, $fileName, Source::DIR_UPLOAD_SOURCE);
 
                 if (!$path) {
                     throw new \Exception('Upload file thất bại');
                 }
 
                 $source->path = $path;
-                $location = storage_path('app/public/sources/'.$fileName);
+                $location = storage_path(Source::DIR_UPLOAD_SOURCE.$fileName);
                 $zip = Zip::open($location);
-                $zip->extract(storage_path('app/public/sources/'.$source->code));
+                $zip->extract(storage_path(Source::DIR_UPLOAD_SOURCE.$source->code));
             }
 
             DB::commit();
@@ -90,7 +92,7 @@ class SourceService
 
             if (!empty($attributes['avatar'])) {
                 $file = $attributes['avatar'];
-                $image = $this->fileHelper->saveFile($file, $file->getClientOriginalName(), '/images/');
+                $image = $this->fileHelper->saveFile($file, $file->getClientOriginalName(), Source::DIR_UPLOAD_IMAGE);
 
                 if (!$image) {
                     throw new \Exception('Upload ảnh đại diện thất bại');
@@ -100,23 +102,23 @@ class SourceService
             }
 
             if (!empty($attributes['source'])) {
-                $folderRoot = storage_path("app/public/sources/".$source->code);
+                $folderRoot = storage_path(Source::DIR_UPLOAD_SOURCE.$source->code);
                 $fileRoot = storage_path("sources/".$source->path);
                 Storage::delete($fileRoot);
                 $fileSys = new Filesystem();
                 $fileSys->cleanDirectory($folderRoot);
                 $file = $attributes['source'];
                 $fileName = $source->code.'.'.$file->getClientOriginalExtension();
-                $path = $this->fileHelper->saveFile($file, $fileName, '/sources/');
+                $path = $this->fileHelper->saveFile($file, $fileName, Source::DIR_UPLOAD_SOURCE);
 
                 if (!$path) {
                     throw new \Exception('Upload file thất bại');
                 }
 
                 $source->path = $path;
-                $location = storage_path('app/public/sources/'.$fileName);
+                $location = storage_path(Source::DIR_UPLOAD_SOURCE.$fileName);
                 $zip = Zip::open($location);
-                $zip->extract(storage_path('app/public/sources/'.$source->code));
+                $zip->extract(storage_path(Source::DIR_UPLOAD_SOURCE.$source->code));
             }
 
             $source->name = $attributes['name'];
@@ -134,7 +136,41 @@ class SourceService
         } catch (\Exception $e) {
             DB::rollBack();
             $msg = $e->getMessage();
+            return false;
+        }
+    }
+
+    public function exportConfig($id, &$msg = '')
+    {
+        try {
+            $source = $this->sourceRepo->findById($id);
+            if (!$source) {
+                throw new \Exception('Không tìm thấy thông tin source mẫu');
+            }
+
+            if (!empty($source->configs)) {
+                $configs = [];
+                foreach ($source->configs as $config) {
+                    if ($config->type == SourceConfig::TYPE_FILE) {
+                        $value = FileHelper::getLink($config->value, SourceConfig::DIR_UPLOAD_FILE);
+                    } else if (in_array($config->type, [SourceConfig::TYPE_RADIO, SourceConfig::TYPE_CHECKBOX])) {
+                        $value = json_decode($config->value, true);
+                    } else {
+                        $value = $config->value;
+                    }
+
+                    $configs[$config->key] = $value;
+                }
+
+                $fileName = 'config.json';
+                $path = storage_path(Source::DIR_UPLOAD_SOURCE.$source->code."/{$fileName}");
+                File::put($path, json_encode($configs));
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
             dd($e);
+            $msg = $e->getMessage();
             return false;
         }
     }

@@ -31,12 +31,12 @@ class FileHelper
      * @param $fileName
      * @return mixed
      */
-    public static function saveFile($file, $fileName, $uploadDir = "/image-uploaded/")
+    public static function saveFile($file, $fileName, $uploadDir = "app/public/image-uploaded/")
     {
         if (!File::exists($uploadDir)) {
             File::makeDirectory($uploadDir, 0777, true, true);
         }
-        $uploadPath = storage_path("app/public{$uploadDir}"); // Thư mục upload
+        $uploadPath = storage_path($uploadDir); // Thư mục upload
         $file->move($uploadPath, $fileName);
         return $fileName;
     }
