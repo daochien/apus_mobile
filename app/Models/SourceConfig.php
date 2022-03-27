@@ -28,5 +28,16 @@ class SourceConfig extends Model
         'is_edit'
     ];
 
+    protected $appends = ['image'];
+
     public $timestamps = true;
+
+    public function getImageAttribute()
+    {
+        if ($this->type === self::TYPE_FILE) {
+            return !empty($this->value) ? FileHelper::getLink($this->value, self::DIR_UPLOAD_FILE) : '';
+        }
+        return '';
+
+    }
 }

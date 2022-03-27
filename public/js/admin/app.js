@@ -5352,6 +5352,68 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 var img_link = "/images/no_image.jpg";
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['editModel', 'sources'],
@@ -5367,13 +5429,9 @@ var img_link = "/images/no_image.jpg";
         configs: []
       }),
       avatarPreview: img_link,
-      configs: [{
-        'id': '',
-        'key': '',
-        'type': 'string',
-        'value': '',
-        'is_edit': true
-      }]
+      sourceConfigs: [],
+      itemConfigSelected: '',
+      packageConfigs: []
     };
   },
   created: function created() {
@@ -5382,6 +5440,49 @@ var img_link = "/images/no_image.jpg";
     }
   },
   methods: {
+    loadConfigs: function loadConfigs() {
+      var that = this;
+      this.sources.forEach(function (item) {
+        if (item.id == that.form.source_id) {
+          that.packageConfigs = [];
+          that.sourceConfigs = item.configs;
+        }
+      });
+    },
+    addItem: function addItem() {
+      var that = this;
+
+      if (this.itemConfigSelected) {
+        var canPush = true;
+        this.packageConfigs.forEach(function (item) {
+          if (item.id == that.itemConfigSelected) {
+            canPush = false;
+          }
+        });
+
+        if (canPush) {
+          this.sourceConfigs.forEach(function (item) {
+            if (item.id == that.itemConfigSelected) {
+              if (item.type === 'checkbox' || item.type === 'radio') {
+                item.new_value = JSON.parse(item.value);
+              } else {
+                item.new_value = item.value;
+              }
+
+              that.packageConfigs.push(item);
+            }
+          });
+        } else {
+          alert('Config này đã được thêm vào danh sách');
+        }
+      }
+    },
+    beforeAddTag: function beforeAddTag(tag) {
+      return item;
+    },
+    removeGiftItem: function removeGiftItem(index) {
+      this.packageConfigs.splice(index, 1);
+    },
     onSelectImageAvatar: function onSelectImageAvatar(e) {
       try {
         var files = e.target.files || e.dataTransfer.files;
@@ -5405,7 +5506,7 @@ var img_link = "/images/no_image.jpg";
       } catch (error) {}
     },
     saveForm: function saveForm() {
-      this.form.configs = JSON.stringify(this.configs);
+      this.form.configs = JSON.stringify(this.packageConfigs);
       this.form.submit('post', '/admin/packages', {
         transformRequest: [function (data, headers) {
           return window.objectToFormData.serialize(data);
@@ -72251,70 +72352,6 @@ var render = function () {
             "div",
             { staticClass: "form-group" },
             [
-              _c("label", { attrs: { for: "input" } }, [
-                _vm._v("Chọn source mẫu(*)"),
-              ]),
-              _vm._v(" "),
-              _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.form.source_id,
-                      expression: "form.source_id",
-                    },
-                  ],
-                  class: [
-                    "form-control",
-                    { "is-invalid": _vm.form.errors.has("source_id") },
-                  ],
-                  on: {
-                    change: function ($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function (o) {
-                          return o.selected
-                        })
-                        .map(function (o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.$set(
-                        _vm.form,
-                        "source_id",
-                        $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      )
-                    },
-                  },
-                },
-                [
-                  _c("option", { attrs: { value: "" } }, [_vm._v("--Chọn--")]),
-                  _vm._v(" "),
-                  _vm._l(_vm.sources, function (item, index) {
-                    return _c(
-                      "option",
-                      { key: index, domProps: { value: item.id } },
-                      [_vm._v(_vm._s(item.name))]
-                    )
-                  }),
-                ],
-                2
-              ),
-              _vm._v(" "),
-              _c("has-error", {
-                attrs: { form: _vm.form, field: "source_id" },
-              }),
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "form-group" },
-            [
               _c("label", { attrs: { for: "input" } }, [_vm._v("Tên gói(*)")]),
               _vm._v(" "),
               _c("input", {
@@ -72381,6 +72418,241 @@ var render = function () {
             ],
             1
           ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "form-group" },
+            [
+              _c("label", { attrs: { for: "input" } }, [
+                _vm._v("Chọn source mẫu(*)"),
+              ]),
+              _vm._v(" "),
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.source_id,
+                      expression: "form.source_id",
+                    },
+                  ],
+                  class: [
+                    "form-control",
+                    { "is-invalid": _vm.form.errors.has("source_id") },
+                  ],
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.form,
+                          "source_id",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
+                      function ($event) {
+                        return _vm.loadConfigs()
+                      },
+                    ],
+                  },
+                },
+                [
+                  _c("option", { attrs: { value: "" } }, [_vm._v("--Chọn--")]),
+                  _vm._v(" "),
+                  _vm._l(_vm.sources, function (item, index) {
+                    return _c(
+                      "option",
+                      { key: index, domProps: { value: item.id } },
+                      [_vm._v(_vm._s(item.name))]
+                    )
+                  }),
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c("has-error", {
+                attrs: { form: _vm.form, field: "source_id" },
+              }),
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "form-group col-md-4" }, [
+              _c("label", { attrs: { for: "input" } }, [_vm._v("Chọn config")]),
+              _vm._v(" "),
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.itemConfigSelected,
+                      expression: "itemConfigSelected",
+                    },
+                  ],
+                  class: ["form-control"],
+                  on: {
+                    change: function ($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function (o) {
+                          return o.selected
+                        })
+                        .map(function (o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.itemConfigSelected = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    },
+                  },
+                },
+                [
+                  _c("option", { attrs: { value: "" } }, [_vm._v("--Chọn--")]),
+                  _vm._v(" "),
+                  _vm._l(_vm.sourceConfigs, function (item, index) {
+                    return _c(
+                      "option",
+                      { key: index, domProps: { value: item.id } },
+                      [_vm._v(_vm._s(item.key))]
+                    )
+                  }),
+                ],
+                2
+              ),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group col-md-4" }, [
+              _c("label", { attrs: { for: "input" } }, [_vm._v("Action")]),
+              _vm._v(" "),
+              _c("div", [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-sm btn-warning",
+                    on: {
+                      click: function ($event) {
+                        return _vm.addItem()
+                      },
+                    },
+                  },
+                  [_vm._v("Chọn")]
+                ),
+              ]),
+            ]),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "table-responsive" }, [
+              _c("table", { staticClass: "table " }, [
+                _vm._m(0),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.packageConfigs, function (item, index) {
+                    return _c("tr", { key: index }, [
+                      _c("td", [
+                        _vm._v(
+                          "\n                                    " +
+                            _vm._s(item.key) +
+                            "\n                                "
+                        ),
+                      ]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(item.type))]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _vm._v(
+                          "\n                                    " +
+                            _vm._s(item.is_edit ? "Yes" : "No") +
+                            "\n                                "
+                        ),
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        [
+                          item.type === "file"
+                            ? [
+                                _c("img", {
+                                  attrs: {
+                                    width: "50",
+                                    src: item.image,
+                                    alt: "",
+                                  },
+                                }),
+                              ]
+                            : [
+                                _vm._v(
+                                  "\n                                        " +
+                                    _vm._s(item.value) +
+                                    "\n                                    "
+                                ),
+                              ],
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        [
+                          item.type === "checkbox" || item.type === "radio"
+                            ? [
+                                _c("input-tag", {
+                                  attrs: {
+                                    "before-adding": _vm.beforeAddTag,
+                                    placeholder: "Enter...",
+                                    limit: 10,
+                                  },
+                                  model: {
+                                    value: item.new_value,
+                                    callback: function ($$v) {
+                                      _vm.$set(item, "new_value", $$v)
+                                    },
+                                    expression: "item.new_value",
+                                  },
+                                }),
+                              ]
+                            : _vm._e(),
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _c("td", [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger btn-sm ",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function ($event) {
+                                return _vm.removeGiftItem(index)
+                              },
+                            },
+                          },
+                          [_c("i", { staticClass: "fas fa-trash-alt" })]
+                        ),
+                      ]),
+                    ])
+                  }),
+                  0
+                ),
+              ]),
+            ]),
+          ]),
         ]),
       ]),
     ]),
@@ -72549,7 +72821,40 @@ var render = function () {
     ]),
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticStyle: { "font-size": "13px" } }, [
+        _c("th", { staticClass: "border-top-0", attrs: { scope: "col" } }, [
+          _vm._v("Key"),
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-top-0", attrs: { scope: "col" } }, [
+          _vm._v("Type"),
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-top-0", attrs: { scope: "col" } }, [
+          _vm._v("Can Edit"),
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-top-0", attrs: { scope: "col" } }, [
+          _vm._v("Old Value"),
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-top-0", attrs: { scope: "col" } }, [
+          _vm._v("New Value"),
+        ]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-top-0", attrs: { scope: "col" } }, [
+          _vm._v("Tác vụ"),
+        ]),
+      ]),
+    ])
+  },
+]
 render._withStripped = true
 
 

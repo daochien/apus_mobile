@@ -5,7 +5,7 @@ namespace App\Repositories\Source;
 use App\Models\Source;
 use App\Repositories\BaseRepository;
 
-class SourceRepository extends BaseRepository implements PackageRepositoryInterface
+class SourceRepository extends BaseRepository implements SourceRepositoryInterface
 {
     public function __construct(Source $model)
     {

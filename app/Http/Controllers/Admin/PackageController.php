@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Source\StoreRequest;
-use App\Http\Requests\Admin\Source\UpdateRequest;
+use App\Http\Requests\Admin\Package\StoreRequest;
+use App\Http\Requests\Admin\Package\UpdateRequest;
 use App\Models\Source;
 use App\Services\Admin\PackageService;
 use Illuminate\Http\Request;
@@ -33,20 +33,13 @@ class PackageController extends Controller
     public function create(Request $request)
     {
 
-        $sources = Source::all();
+        $sources = Source::query()->with('configs')->orderBy('id', 'desc')->get();
 
         return view('admin.package.create', compact('sources'));
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $this->validate($request, [
-            'source_id' => 'required|integer',
-            'name' => 'required|string',
-            'price' => 'required|integer',
-            'avatar' => 'nullable|image|max:204800',
-            'desc' => 'nullable|string|max:500'
-        ]);
         $result = $this->service->store($request->all(), $msg);
         if (!$result) {
             return response_error($msg);

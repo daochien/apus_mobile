@@ -9,15 +9,6 @@
             <div class="card">
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="input">Chọn source mẫu(*)</label>
-                        <select v-model="form.source_id" :class="['form-control', { 'is-invalid': form.errors.has('source_id') }]">
-                            <option value="">--Chọn--</option>
-                            <option v-for="(item, index) in sources" :value="item.id" :key="index">{{ item.name }}</option>
-                        </select>
-                        <has-error :form="form" field="source_id"></has-error>
-                    </div>
-
-                    <div class="form-group">
                         <label for="input">Tên gói(*)</label>
                         <input v-model="form.name" :class="['form-control', { 'is-invalid': form.errors.has('name') }]">
                         <has-error :form="form" field="name"></has-error>
@@ -27,6 +18,77 @@
                         <label for="input">Mô tả</label>
                         <textarea rows="5" v-model="form.desc" :class="['form-control', { 'is-invalid': form.errors.has('desc') }]"></textarea>
                         <has-error :form="form" field="desc"></has-error>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input">Chọn source mẫu(*)</label>
+                        <select @change="loadConfigs()" v-model="form.source_id" :class="['form-control', { 'is-invalid': form.errors.has('source_id') }]">
+                            <option value="">--Chọn--</option>
+                            <option v-for="(item, index) in sources" :value="item.id" :key="index">{{ item.name }}</option>
+                        </select>
+                        <has-error :form="form" field="source_id"></has-error>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="input">Chọn config</label>
+                            <select v-model="itemConfigSelected" :class="['form-control']">
+                                <option value="">--Chọn--</option>
+                                <option v-for="(item, index) in sourceConfigs" :value="item.id" :key="index">{{ item.key }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="input">Action</label>
+                            <div>
+                                <button class="btn btn-sm btn-warning" @click="addItem()">Chọn</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table ">
+                                <thead>
+                                <tr style="font-size:13px;">
+                                    <th class="border-top-0" scope="col">Key</th>
+                                    <th class="border-top-0" scope="col">Type</th>
+                                    <th class="border-top-0" scope="col">Can Edit</th>
+                                    <th class="border-top-0" scope="col">Old Value</th>
+                                    <th class="border-top-0" scope="col">New Value</th>
+                                    <th class="border-top-0" scope="col">Tác vụ</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(item, index) in packageConfigs" :key="index">
+                                    <td>
+                                        {{ item.key }}
+                                    </td>
+                                    <td>{{ item.type }}</td>
+                                    <td>
+                                        {{ item.is_edit ? 'Yes': 'No' }}
+                                    </td>
+                                    <td>
+                                        <template v-if="item.type === 'file'">
+                                            <img width="50" :src="item.image" alt="">
+                                        </template>
+                                        <template v-else>
+                                            {{ item.value }}
+                                        </template>
+                                    </td>
+
+                                    <td>
+                                        <template v-if="item.type === 'checkbox' || item.type === 'radio'">
+                                            <input-tag :before-adding="beforeAddTag" placeholder="Enter..." v-model="item.new_value" :limit="10"></input-tag>
+                                        </template>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm " @click="removeGiftItem(index)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                 </div>
@@ -101,17 +163,10 @@ export default {
                 price: '',
                 configs: []
             }),
-
             avatarPreview: img_link,
-            configs: [
-                {
-                    'id': '',
-                    'key': '',
-                    'type': 'string',
-                    'value': '',
-                    'is_edit': true
-                }
-            ]
+            sourceConfigs: [],
+            itemConfigSelected: '',
+            packageConfigs: []
         }
     },
     created () {
@@ -120,7 +175,47 @@ export default {
         }
     },
     methods: {
+        loadConfigs () {
+            let that = this;
+            this.sources.forEach ((item) => {
+                if (item.id == that.form.source_id) {
+                    that.packageConfigs = [];
+                    that.sourceConfigs = item.configs
+                }
+            })
+        },
+        addItem () {
+            let that = this;
+            if (this.itemConfigSelected) {
+                let canPush = true;
+                this.packageConfigs.forEach((item) => {
+                    if (item.id == that.itemConfigSelected) {
+                        canPush = false;
+                    }
+                })
+                if (canPush) {
+                    this.sourceConfigs.forEach( (item) => {
+                        if (item.id == that.itemConfigSelected) {
+                            if (item.type === 'checkbox' || item.type === 'radio') {
+                                item.new_value = JSON.parse(item.value);
+                            } else {
+                                item.new_value = item.value;
+                            }
 
+                            that.packageConfigs.push(item);
+                        }
+                    })
+                } else {
+                    alert('Config này đã được thêm vào danh sách')
+                }
+            }
+        },
+        beforeAddTag (tag) {
+            return item;
+        },
+        removeGiftItem (index) {
+            this.packageConfigs.splice(index, 1);
+        },
         onSelectImageAvatar (e) {
             try {
                 let files = e.target.files || e.dataTransfer.files;
@@ -143,7 +238,7 @@ export default {
         },
 
         saveForm () {
-            this.form.configs = JSON.stringify(this.configs);
+            this.form.configs = JSON.stringify(this.packageConfigs);
             this.form.submit('post', '/admin/packages', {
                 transformRequest: [function (data, headers) {
                     return window.objectToFormData.serialize(data)

@@ -5,7 +5,7 @@ namespace App\Services\Admin;
 use App\Helpers\FileHelper;
 use App\Models\Source;
 use App\Models\SourceConfig;
-use App\Repositories\Source\PackageRepositoryInterface;
+use App\Repositories\Source\SourceRepositoryInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -20,7 +20,7 @@ class SourceService
     protected $fileHelper;
 
     public function __construct(
-        PackageRepositoryInterface $sourceRepo,
+        SourceRepositoryInterface $sourceRepo,
         FileHelper                 $fileHelper
     )
     {
