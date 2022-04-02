@@ -6,7 +6,7 @@ use App\Helpers\FileHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SourceConfig extends Model
+class SourceConfigItem extends Model
 {
     use HasFactory;
 
@@ -18,18 +18,12 @@ class SourceConfig extends Model
 
     CONST DIR_UPLOAD_FILE = '/source/configs/file/';
 
-    CONST IS_GROUP = 1;
-    CONST NOT_IS_GROUP = 0;
-
-    protected $table = 'source_configs';
-
     protected $fillable = [
-        'source_id',
+        'config_id',
         'key',
         'type',
         'value',
-        'is_edit',
-        'is_group'
+        'is_edit'
     ];
 
     protected $appends = ['image'];
@@ -44,4 +38,5 @@ class SourceConfig extends Model
         return '';
 
     }
+
 }

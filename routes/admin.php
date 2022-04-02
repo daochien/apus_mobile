@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\SourceController;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Admin\PackageController;
+use App\Http\Controllers\Admin\SourceConfigController;
 
 Route::get('login', [AuthController::class, 'login'])->name('admin.login');
 Route::post('sign-in', [AuthController::class, 'signIn'])->name('admin.signIn');
@@ -26,6 +27,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('{id}', [SourceController::class, 'update'])->name('admin.sources.update');
         Route::delete('{id}', [SourceController::class, 'destroy'])->name('admin.sources.destroy');
         Route::post('export/{id}', [SourceController::class, 'export'])->name('admin.sources.export');
+    });
+
+    Route::prefix('source-configs')->group(function() {
+        Route::get('', [SourceConfigController::class, 'index'])->name('admin.sources.index');
+        Route::post('', [SourceConfigController::class, 'store'])->name('admin.sources.store');
+        Route::get('create', [SourceConfigController::class, 'create'])->name('admin.sources.create');
+        Route::get('{id}', [SourceConfigController::class, 'edit'])->name('admin.sources.edit');
+        Route::post('{id}', [SourceConfigController::class, 'update'])->name('admin.sources.update');
+        Route::delete('{id}', [SourceConfigController::class, 'destroy'])->name('admin.sources.destroy');
+        Route::post('export/{id}', [SourceConfigController::class, 'export'])->name('admin.sources.export');
     });
 
     Route::prefix('packages')->group(function() {
