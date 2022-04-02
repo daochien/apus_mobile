@@ -17,9 +17,9 @@ class CreateSourceConfigsTable extends Migration
             $table->id();
             $table->integer('source_id');
             $table->string('key');
-            $table->string('type');
-            $table->string('value');
-            $table->tinyInteger('is_edit');
+            $table->string('type')->nullable();
+            $table->string('value')->nullable();
+            $table->tinyInteger('is_edit')->nullable();
             $table->timestamps();
         });
     }
