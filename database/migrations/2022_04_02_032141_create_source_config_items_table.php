@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSourceConfigsTable extends Migration
+class CreateSourceConfigItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateSourceConfigsTable extends Migration
      */
     public function up()
     {
-        Schema::create('source_configs', function (Blueprint $table) {
+        Schema::create('source_config_items', function (Blueprint $table) {
             $table->id();
-            $table->integer('source_id');
+            $table->integer('config_id');
             $table->string('key');
-            $table->string('type')->nullable();
-            $table->string('value')->nullable();
-            $table->tinyInteger('is_edit')->nullable();
+            $table->string('type');
+            $table->text('value');
+            $table->tinyInteger('is_edit')->default(1);
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateSourceConfigsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('source_configs');
+        Schema::dropIfExists('source_config_items');
     }
 }

@@ -5,10 +5,19 @@ Vue.component(
     require("./components/admin/source/Index").default
 );
 
-
 Vue.component(
     "admin-source-form",
     require("./components/admin/source/Form").default
+);
+
+Vue.component(
+    "admin-source-config-index",
+    require("./components/admin/source_config/Index").default
+);
+
+Vue.component(
+    "admin-source-config-form",
+    require("./components/admin/source_config/Form").default
 );
 
 Vue.component(
