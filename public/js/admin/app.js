@@ -5414,6 +5414,84 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 var img_link = "/images/no_image.jpg";
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['editModel', 'sources'],
@@ -5482,6 +5560,9 @@ var img_link = "/images/no_image.jpg";
     },
     removeGiftItem: function removeGiftItem(index) {
       this.packageConfigs.splice(index, 1);
+    },
+    removeChildItem: function removeChildItem(index, i) {
+      this.packageConfigs[index].items.splice(i, 1);
     },
     onSelectImageAvatar: function onSelectImageAvatar(e) {
       try {
@@ -72946,7 +73027,7 @@ var render = function () {
       ]
     ),
     _vm._v(" "),
-    _c("div", { staticClass: "col-md-8" }, [
+    _c("div", { staticClass: "col-md-12" }, [
       _c("div", { staticClass: "card" }, [
         _c("div", { staticClass: "card-body" }, [
           _c(
@@ -72983,6 +73064,163 @@ var render = function () {
             ],
             1
           ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "form-group" },
+            [
+              _c("label", { attrs: { for: "input" } }, [_vm._v("Giá bán(*)")]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.form.price,
+                    expression: "form.price",
+                  },
+                ],
+                class: [
+                  "form-control",
+                  { "is-invalid": _vm.form.errors.has("price") },
+                ],
+                attrs: { type: "number" },
+                domProps: { value: _vm.form.price },
+                on: {
+                  input: function ($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.form, "price", $event.target.value)
+                  },
+                },
+              }),
+              _vm._v(" "),
+              _c("has-error", { attrs: { form: _vm.form, field: "price" } }),
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", { attrs: { for: "input" } }, [_vm._v("Ảnh đại diện")]),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "d-flex justify-content-start",
+                attrs: { "data-v-65473a7c": "" },
+              },
+              [
+                _c("img", {
+                  staticStyle: { border: "1px solid" },
+                  attrs: {
+                    src: _vm.avatarPreview,
+                    width: "100",
+                    height: "100",
+                  },
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "d-flex align-items-center ml-3",
+                    attrs: { "data-v-65473a7c": "" },
+                  },
+                  [
+                    _c("input", {
+                      ref: "fileupload",
+                      class: [
+                        "form-control",
+                        { "is-invalid": _vm.form.errors.has("avatar") },
+                      ],
+                      attrs: {
+                        type: "file",
+                        id: "icon",
+                        placeholder: "Icon",
+                        accept: "image/*",
+                      },
+                      on: {
+                        change: function ($event) {
+                          return _vm.onSelectImageAvatar($event)
+                        },
+                      },
+                    }),
+                    _vm._v(" "),
+                    _c("has-error", {
+                      attrs: { form: _vm.form, field: "avatar" },
+                    }),
+                  ],
+                  1
+                ),
+              ]
+            ),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", { attrs: { for: "input" } }, [_vm._v("Trạng thái")]),
+            _vm._v(" "),
+            _c("div", [
+              _c("div", { staticClass: "form-check form-check-inline" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.status,
+                      expression: "form.status",
+                    },
+                  ],
+                  staticClass: "form-check-input",
+                  attrs: { type: "radio", id: "status1", value: "1" },
+                  domProps: { checked: _vm._q(_vm.form.status, "1") },
+                  on: {
+                    change: function ($event) {
+                      return _vm.$set(_vm.form, "status", "1")
+                    },
+                  },
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "form-check-label",
+                    attrs: { for: "status1" },
+                  },
+                  [_vm._v("Activce")]
+                ),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-check form-check-inline" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.status,
+                      expression: "form.status",
+                    },
+                  ],
+                  staticClass: "form-check-input",
+                  attrs: { type: "radio", id: "status2", value: "0" },
+                  domProps: { checked: _vm._q(_vm.form.status, "0") },
+                  on: {
+                    change: function ($event) {
+                      return _vm.$set(_vm.form, "status", "0")
+                    },
+                  },
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "form-check-label",
+                    attrs: { for: "status2" },
+                  },
+                  [_vm._v("InActive")]
+                ),
+              ]),
+            ]),
+          ]),
           _vm._v(" "),
           _c(
             "div",
@@ -73156,269 +73394,235 @@ var render = function () {
             ]),
           ]),
           _vm._v(" "),
-          _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "table-responsive" }, [
-              _c("table", { staticClass: "table " }, [
-                _vm._m(0),
-                _vm._v(" "),
-                _c(
-                  "tbody",
-                  _vm._l(_vm.packageConfigs, function (item, index) {
-                    return _c("tr", { key: index }, [
-                      _c("td", [
-                        _vm._v(
-                          "\n                                    " +
-                            _vm._s(item.key) +
-                            "\n                                "
-                        ),
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(item.type))]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(
-                          "\n                                    " +
-                            _vm._s(item.is_edit ? "Yes" : "No") +
-                            "\n                                "
-                        ),
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "td",
-                        [
-                          item.type === "file"
-                            ? [
-                                _c("img", {
-                                  attrs: {
-                                    width: "50",
-                                    src: item.image,
-                                    alt: "",
-                                  },
-                                }),
-                              ]
-                            : [
-                                _vm._v(
-                                  "\n                                        " +
-                                    _vm._s(item.value) +
-                                    "\n                                    "
-                                ),
-                              ],
-                        ],
-                        2
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "td",
-                        [
-                          item.type === "checkbox" || item.type === "radio"
-                            ? [
-                                _c("input-tag", {
-                                  attrs: {
-                                    "before-adding": _vm.beforeAddTag,
-                                    placeholder: "Enter...",
-                                    limit: 10,
-                                  },
-                                  model: {
-                                    value: item.new_value,
-                                    callback: function ($$v) {
-                                      _vm.$set(item, "new_value", $$v)
-                                    },
-                                    expression: "item.new_value",
-                                  },
-                                }),
-                              ]
-                            : _vm._e(),
-                        ],
-                        2
-                      ),
-                      _vm._v(" "),
-                      _c("td", [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-danger btn-sm ",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function ($event) {
-                                return _vm.removeGiftItem(index)
-                              },
-                            },
-                          },
-                          [_c("i", { staticClass: "fas fa-trash-alt" })]
-                        ),
-                      ]),
-                    ])
-                  }),
-                  0
-                ),
-              ]),
-            ]),
-          ]),
+          _c("div", { staticClass: "row" }),
         ]),
       ]),
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "col-md-4" }, [
-      _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-body" }, [
-          _c(
-            "div",
-            { staticClass: "form-group" },
-            [
-              _c("label", { attrs: { for: "input" } }, [_vm._v("Giá bán(*)")]),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.form.price,
-                    expression: "form.price",
-                  },
-                ],
-                class: [
-                  "form-control",
-                  { "is-invalid": _vm.form.errors.has("price") },
-                ],
-                attrs: { type: "number" },
-                domProps: { value: _vm.form.price },
-                on: {
-                  input: function ($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.form, "price", $event.target.value)
-                  },
-                },
-              }),
-              _vm._v(" "),
-              _c("has-error", { attrs: { form: _vm.form, field: "price" } }),
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c("div", { staticClass: "form-group" }, [
-            _c("label", { attrs: { for: "input" } }, [_vm._v("Ảnh đại diện")]),
+    _c("div", { staticClass: "col-md-12" }, [
+      _c(
+        "div",
+        { staticClass: "card-body", staticStyle: { background: "#fff" } },
+        [
+          _c("table", { staticClass: "table table-hover" }, [
+            _vm._m(0),
             _vm._v(" "),
             _c(
-              "div",
-              {
-                staticClass: "d-flex justify-content-start",
-                attrs: { "data-v-65473a7c": "" },
-              },
+              "tbody",
               [
-                _c("img", {
-                  staticStyle: { border: "1px solid" },
-                  attrs: {
-                    src: _vm.avatarPreview,
-                    width: "100",
-                    height: "100",
-                  },
-                }),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass: "d-flex align-items-center ml-3",
-                    attrs: { "data-v-65473a7c": "" },
-                  },
-                  [
-                    _c("input", {
-                      ref: "fileupload",
-                      class: [
-                        "form-control",
-                        { "is-invalid": _vm.form.errors.has("avatar") },
-                      ],
-                      attrs: {
-                        type: "file",
-                        id: "icon",
-                        placeholder: "Icon",
-                        accept: "image/*",
-                      },
-                      on: {
-                        change: function ($event) {
-                          return _vm.onSelectImageAvatar($event)
+                _vm._l(_vm.packageConfigs, function (config, index) {
+                  return [
+                    _c(
+                      "tr",
+                      {
+                        key: index,
+                        staticClass: "clickable",
+                        staticStyle: { "font-weight": "bold" },
+                        attrs: {
+                          "data-toggle": "collapse",
+                          id: "row" + index,
+                          "data-target": ".row" + index,
                         },
                       },
-                    }),
+                      [
+                        _c("td", [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(config.key) +
+                              "\n                            "
+                          ),
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(config.type ? config.type : "-")),
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(config.is_edit ? "Yes" : "No") +
+                              "\n                            "
+                          ),
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          [
+                            config.type === "file"
+                              ? [
+                                  _c("img", {
+                                    attrs: {
+                                      width: "50",
+                                      src: config.image,
+                                      alt: "",
+                                    },
+                                  }),
+                                ]
+                              : [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(
+                                        config.value ? config.value : "-"
+                                      ) +
+                                      "\n                                "
+                                  ),
+                                ],
+                          ],
+                          2
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          [
+                            config.type === "checkbox" ||
+                            config.type === "radio"
+                              ? [
+                                  _c("input-tag", {
+                                    attrs: {
+                                      placeholder: "Enter...",
+                                      limit: 10,
+                                    },
+                                    model: {
+                                      value: config.new_value,
+                                      callback: function ($$v) {
+                                        _vm.$set(config, "new_value", $$v)
+                                      },
+                                      expression: "config.new_value",
+                                    },
+                                  }),
+                                ]
+                              : _vm._e(),
+                          ],
+                          2
+                        ),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-danger btn-sm ",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function ($event) {
+                                  return _vm.removeGiftItem(index)
+                                },
+                              },
+                            },
+                            [_c("i", { staticClass: "fas fa-trash-alt" })]
+                          ),
+                        ]),
+                      ]
+                    ),
                     _vm._v(" "),
-                    _c("has-error", {
-                      attrs: { form: _vm.form, field: "avatar" },
+                    _vm._l(config.items, function (child, i) {
+                      return config.items.length > 0 && config.is_group == 1
+                        ? [
+                            _c(
+                              "tr",
+                              {
+                                key: "child_" + index + "_" + i,
+                                class: "collapse row" + index,
+                              },
+                              [
+                                _c("td", [_vm._v(_vm._s(child.key))]),
+                                _vm._v(" "),
+                                _c("td", [_vm._v(_vm._s(child.type))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(child.is_edit ? "Yes" : "No") +
+                                      "\n                                "
+                                  ),
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "td",
+                                  [
+                                    child.type === "file"
+                                      ? [
+                                          _c("img", {
+                                            attrs: {
+                                              width: "50",
+                                              src: child.image,
+                                              alt: "",
+                                            },
+                                          }),
+                                        ]
+                                      : [
+                                          _vm._v(
+                                            "\n                                        " +
+                                              _vm._s(
+                                                child.value ? child.value : "-"
+                                              ) +
+                                              "\n                                    "
+                                          ),
+                                        ],
+                                  ],
+                                  2
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "td",
+                                  [
+                                    child.type === "checkbox" ||
+                                    child.type === "radio"
+                                      ? [
+                                          _c("input-tag", {
+                                            attrs: {
+                                              placeholder: "Enter...",
+                                              limit: 10,
+                                            },
+                                            model: {
+                                              value: child.new_value,
+                                              callback: function ($$v) {
+                                                _vm.$set(
+                                                  child,
+                                                  "new_value",
+                                                  $$v
+                                                )
+                                              },
+                                              expression: "child.new_value",
+                                            },
+                                          }),
+                                        ]
+                                      : _vm._e(),
+                                  ],
+                                  2
+                                ),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-danger btn-sm ",
+                                      attrs: { type: "button" },
+                                      on: {
+                                        click: function ($event) {
+                                          return _vm.removeChildItem(index, i)
+                                        },
+                                      },
+                                    },
+                                    [
+                                      _c("i", {
+                                        staticClass: "fas fa-trash-alt",
+                                      }),
+                                    ]
+                                  ),
+                                ]),
+                              ]
+                            ),
+                          ]
+                        : _vm._e()
                     }),
-                  ],
-                  1
-                ),
-              ]
+                  ]
+                }),
+              ],
+              2
             ),
           ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "form-group" }, [
-            _c("label", { attrs: { for: "input" } }, [_vm._v("Trạng thái")]),
-            _vm._v(" "),
-            _c("div", [
-              _c("div", { staticClass: "form-check form-check-inline" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.form.status,
-                      expression: "form.status",
-                    },
-                  ],
-                  staticClass: "form-check-input",
-                  attrs: { type: "radio", id: "status1", value: "1" },
-                  domProps: { checked: _vm._q(_vm.form.status, "1") },
-                  on: {
-                    change: function ($event) {
-                      return _vm.$set(_vm.form, "status", "1")
-                    },
-                  },
-                }),
-                _vm._v(" "),
-                _c(
-                  "label",
-                  {
-                    staticClass: "form-check-label",
-                    attrs: { for: "status1" },
-                  },
-                  [_vm._v("Activce")]
-                ),
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-check form-check-inline" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.form.status,
-                      expression: "form.status",
-                    },
-                  ],
-                  staticClass: "form-check-input",
-                  attrs: { type: "radio", id: "status2", value: "0" },
-                  domProps: { checked: _vm._q(_vm.form.status, "0") },
-                  on: {
-                    change: function ($event) {
-                      return _vm.$set(_vm.form, "status", "0")
-                    },
-                  },
-                }),
-                _vm._v(" "),
-                _c(
-                  "label",
-                  {
-                    staticClass: "form-check-label",
-                    attrs: { for: "status2" },
-                  },
-                  [_vm._v("InActive")]
-                ),
-              ]),
-            ]),
-          ]),
-        ]),
-      ]),
+        ]
+      ),
     ]),
   ])
 }
@@ -73428,7 +73632,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("thead", [
-      _c("tr", { staticStyle: { "font-size": "13px" } }, [
+      _c("tr", [
         _c("th", { staticClass: "border-top-0", attrs: { scope: "col" } }, [
           _vm._v("Key"),
         ]),

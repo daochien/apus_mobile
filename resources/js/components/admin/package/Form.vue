@@ -5,13 +5,58 @@
             <button @click.prevent="edit(form.id)" v-if="editModel" type="submit" class="btn btn-responsive btn-info">Cập nhật</button>
             <button @click.prevent="saveForm()" v-else class="btn btn-responsive btn-primary">Tạo mới</button>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
                     <div class="form-group">
                         <label for="input">Tên gói(*)</label>
                         <input v-model="form.name" :class="['form-control', { 'is-invalid': form.errors.has('name') }]">
                         <has-error :form="form" field="name"></has-error>
+                    </div>
+                    <div class="form-group">
+                        <label for="input">Giá bán(*)</label>
+                        <input type="number" v-model="form.price" :class="['form-control', { 'is-invalid': form.errors.has('price') }]">
+                        <has-error :form="form" field="price"></has-error>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input">Ảnh đại diện</label>
+                        <div data-v-65473a7c="" class="d-flex justify-content-start">
+
+                            <img
+                                :src="avatarPreview"
+                                style="border: 1px solid"
+                                width="100"
+                                height="100"
+                            />
+                            <div data-v-65473a7c="" class="d-flex align-items-center ml-3">
+                                <input
+                                    type="file"
+                                    @change="onSelectImageAvatar($event)"
+                                    :class="['form-control', {'is-invalid': form.errors.has('avatar') }]"
+                                    id="icon"
+                                    placeholder="Icon"
+                                    accept="image/*"
+                                    ref="fileupload"
+                                />
+                                <has-error :form="form" field="avatar"></has-error>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input">Trạng thái</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" v-model="form.status" id="status1" value="1">
+                                <label class="form-check-label" for="status1">Activce</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" v-model="form.status" id="status2" value="0">
+                                <label class="form-check-label" for="status2">InActive</label>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -45,105 +90,138 @@
                     </div>
 
                     <div class="row">
-                        <div class="table-responsive">
+<!--
                             <table class="table ">
-                                <thead>
-                                <tr style="font-size:13px;">
-                                    <th class="border-top-0" scope="col">Key</th>
-                                    <th class="border-top-0" scope="col">Type</th>
-                                    <th class="border-top-0" scope="col">Can Edit</th>
-                                    <th class="border-top-0" scope="col">Old Value</th>
-                                    <th class="border-top-0" scope="col">New Value</th>
-                                    <th class="border-top-0" scope="col">Tác vụ</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="(item, index) in packageConfigs" :key="index">
-                                    <td>
-                                        {{ item.key }}
-                                    </td>
-                                    <td>{{ item.type }}</td>
-                                    <td>
-                                        {{ item.is_edit ? 'Yes': 'No' }}
-                                    </td>
-                                    <td>
-                                        <template v-if="item.type === 'file'">
-                                            <img width="50" :src="item.image" alt="">
-                                        </template>
-                                        <template v-else>
-                                            {{ item.value }}
-                                        </template>
-                                    </td>
+                               <thead>-->
+<!--                                <tr style="font-size:13px;">-->
+<!--                                    <th class="border-top-0" scope="col">Key</th>-->
+<!--                                    <th class="border-top-0" scope="col">Type</th>-->
+<!--                                    <th class="border-top-0" scope="col">Can Edit</th>-->
+<!--                                    <th class="border-top-0" scope="col">Old Value</th>-->
+<!--                                    <th class="border-top-0" scope="col">New Value</th>-->
+<!--                                    <th class="border-top-0" scope="col">Tác vụ</th>-->
+<!--                                </tr>-->
+<!--                                </thead>-->
+<!--                                <tbody>-->
+<!--                                <tr v-for="(item, index) in packageConfigs" :key="index">-->
+<!--                                    <td>-->
+<!--                                        {{ item.key }}-->
+<!--                                    </td>-->
+<!--                                    <td>{{ item.type }}</td>-->
+<!--                                    <td>-->
+<!--                                        {{ item.is_edit ? 'Yes': 'No' }}-->
+<!--                                    </td>-->
+<!--                                    <td>-->
+<!--                                        <template v-if="item.type === 'file'">-->
+<!--                                            <img width="50" :src="item.image" alt="">-->
+<!--                                        </template>-->
+<!--                                        <template v-else>-->
+<!--                                            {{ item.value }}-->
+<!--                                        </template>-->
+<!--                                    </td>-->
 
-                                    <td>
-                                        <template v-if="item.type === 'checkbox' || item.type === 'radio'">
-                                            <input-tag :before-adding="beforeAddTag" placeholder="Enter..." v-model="item.new_value" :limit="10"></input-tag>
-                                        </template>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm " @click="removeGiftItem(index)">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+<!--                                    <td>-->
+<!--                                        <template v-if="item.type === 'checkbox' || item.type === 'radio'">-->
+<!--                                            <input-tag :before-adding="beforeAddTag" placeholder="Enter..." v-model="item.new_value" :limit="10"></input-tag>-->
+<!--                                        </template>-->
+<!--                                    </td>-->
+<!--                                    <td>-->
+<!--                                        <button type="button" class="btn btn-danger btn-sm " @click="removeGiftItem(index)">-->
+<!--                                            <i class="fas fa-trash-alt"></i>-->
+<!--                                        </button>-->
+<!--                                    </td>-->
+<!--                                </tr>-->
+<!--                                </tbody>-->
+<!--                            </table>-->
+
+
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="form-group">
-                        <label for="input">Giá bán(*)</label>
-                        <input type="number" v-model="form.price" :class="['form-control', { 'is-invalid': form.errors.has('price') }]">
-                        <has-error :form="form" field="price"></has-error>
-                    </div>
-                    <div class="form-group">
-                        <label for="input">Ảnh đại diện</label>
-                        <div data-v-65473a7c="" class="d-flex justify-content-start">
+        <div class="col-md-12">
+            <div class="card-body" style="background: #fff;">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th class="border-top-0" scope="col">Key</th>
+                        <th class="border-top-0" scope="col">Type</th>
+                        <th class="border-top-0" scope="col">Can Edit</th>
+                        <th class="border-top-0" scope="col">Old Value</th>
+                        <th class="border-top-0" scope="col">New Value</th>
+                        <th class="border-top-0" scope="col">Tác vụ</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template  v-for="(config, index) in packageConfigs" >
+                        <tr
+                            style="font-weight:bold;"
+                            class="clickable"
+                            data-toggle="collapse"
+                            :key="index"
+                            :id="`row${index}`" :data-target="`.row${index}`">
+                            <td>
+                                {{ config.key }}
+                            </td>
+                            <td>{{ config.type ? config.type: '-' }}</td>
+                            <td>
+                                {{ config.is_edit ? 'Yes': 'No' }}
+                            </td>
+                            <td>
+                                <template v-if="config.type === 'file'">
+                                    <img width="50" :src="config.image" alt="">
+                                </template>
+                                <template v-else>
+                                    {{ config.value? config.value: '-' }}
+                                </template>
+                            </td>
 
-                            <img
-                                :src="avatarPreview"
-                                style="border: 1px solid"
-                                width="100"
-                                height="100"
-                            />
-                            <div data-v-65473a7c="" class="d-flex align-items-center ml-3">
-                                <input
-                                    type="file"
-                                    @change="onSelectImageAvatar($event)"
-                                    :class="['form-control', {'is-invalid': form.errors.has('avatar') }]"
-                                    id="icon"
-                                    placeholder="Icon"
-                                    accept="image/*"
-                                    ref="fileupload"
-                                />
-                                <has-error :form="form" field="avatar"></has-error>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="input">Trạng thái</label>
-                        <div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" v-model="form.status" id="status1" value="1">
-                                <label class="form-check-label" for="status1">Activce</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" v-model="form.status" id="status2" value="0">
-                                <label class="form-check-label" for="status2">InActive</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            <td>
+                                <template v-if="config.type === 'checkbox' || config.type === 'radio'">
+                                    <input-tag placeholder="Enter..." v-model="config.new_value" :limit="10"></input-tag>
+                                </template>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm " @click="removeGiftItem(index)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <template v-if="config.items.length > 0 && config.is_group == 1" v-for="(child, i) in config.items" >
+                            <tr :class="`collapse row${index}`" :key="`child_${index}_${i}`">
+                                <td>{{ child.key }}</td>
+                                <td>{{ child.type }}</td>
+                                <td>
+                                    {{ child.is_edit ? 'Yes': 'No' }}
+                                </td>
+                                <td>
+                                    <template v-if="child.type === 'file'">
+                                        <img width="50" :src="child.image" alt="">
+                                    </template>
+                                    <template v-else>
+                                        {{ child.value? child.value: '-' }}
+                                    </template>
+                                </td>
+                                <td>
+                                    <template v-if="child.type === 'checkbox' || child.type === 'radio'">
+                                        <input-tag placeholder="Enter..." v-model="child.new_value" :limit="10"></input-tag>
+                                    </template>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm " @click="removeChildItem(index, i)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+                    </tbody>
+                </table>
             </div>
         </div>
+
     </div>
 </template>
 <script>
@@ -215,6 +293,9 @@ export default {
         },
         removeGiftItem (index) {
             this.packageConfigs.splice(index, 1);
+        },
+        removeChildItem (index, i) {
+            this.packageConfigs[index].items.splice(i, 1);
         },
         onSelectImageAvatar (e) {
             try {

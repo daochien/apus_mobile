@@ -33,7 +33,7 @@ class PackageController extends Controller
     public function create(Request $request)
     {
 
-        $sources = Source::query()->with('configs')->orderBy('id', 'desc')->get();
+        $sources = Source::query()->with('configs.items')->orderBy('id', 'desc')->get();
 
         return view('admin.package.create', compact('sources'));
     }
