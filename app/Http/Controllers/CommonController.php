@@ -21,7 +21,7 @@ class CommonController extends Controller
                 return response_error('Upload file thất bại');
             }
             return response_success('success', [
-                'path' => FileHelper::getLink($image, SourceConfig::DIR_UPLOAD_FILE),
+                'path' => FileHelper::getLink($image, SourceConfig::PATH_GET_FILE),
                 'file_name' => $image
             ]);
         }

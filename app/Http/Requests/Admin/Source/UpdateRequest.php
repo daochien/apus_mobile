@@ -27,9 +27,9 @@ class UpdateRequest extends FormRequest
             'name' => 'required|string',
             'avatar' => 'nullable|image|max:204800',
             'source' => 'nullable|file|mimes:zip',
-            'configs' => 'required|array',
-            'configs.*.key' => 'required|string',
-            'configs.*.type' => 'required|string',
+            //'configs' => 'required|array',
+            //'configs.*.key' => 'required|string',
+            //'configs.*.type' => 'required|string',
             //'configs.*.value' => 'required',
         ];
     }

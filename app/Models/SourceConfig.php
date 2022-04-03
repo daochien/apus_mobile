@@ -16,7 +16,9 @@ class SourceConfig extends Model
     CONST TYPE_CHECKBOX = 'checkbox';
     CONST TYPE_FILE = 'file';
 
-    CONST DIR_UPLOAD_FILE = '/source/configs/file/';
+    CONST DIR_UPLOAD_FILE = '/app/public/source/configs/file/';
+
+    CONST PATH_GET_FILE = '/source/configs/file/';
 
     CONST IS_GROUP = 1;
     CONST NOT_IS_GROUP = 0;
@@ -42,6 +44,15 @@ class SourceConfig extends Model
             return !empty($this->value) ? FileHelper::getLink($this->value, self::DIR_UPLOAD_FILE) : '';
         }
         return '';
+    }
 
+    public function source()
+    {
+        return $this->belongsTo(Source::class, 'source_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(SourceConfigItem::class, 'config_id');
     }
 }

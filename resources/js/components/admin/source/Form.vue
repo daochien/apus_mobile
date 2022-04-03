@@ -19,80 +19,6 @@
                         <textarea rows="5" v-model="form.desc" :class="['form-control', { 'is-invalid': form.errors.has('desc') }]"></textarea>
                         <has-error :form="form" field="desc"></has-error>
                     </div>
-                    <div class="row" v-for="(config, index) in configs" :key="index">
-                        <div class="form-group col-md-3">
-                            <label for="input">Key</label>
-                            <input v-model="config.key" :class="['form-control']">
-<!--                            <has-error :form="form" field="name"></has-error>-->
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label for="input">Type(*)</label>
-                            <select v-model="config.type" :class="['form-control']">
-                                <option value="">--Chọn--</option>
-                                <option value="string">String</option>
-                                <option value="number">Number</option>
-                                <option value="radio">Radio</option>
-                                <option value="checkbox">Checkbox</option>
-                                <option value="file">File</option>
-                            </select>
-<!--                            <has-error :form="form" field="group_gift_id"></has-error>-->
-                        </div>
-                        <template v-if="config.type === 'string'">
-                            <div class="form-group col-md-3">
-                                <label for="input">Value</label>
-                                <input v-model="config.value" :class="['form-control']">
-                                <!--<has-error :form="form" field="name"></has-error>-->
-                            </div>
-                        </template>
-                        <template v-else-if="config.type === 'number'">
-                            <div class="form-group col-md-3">
-                                <label for="input">Value</label>
-                                <input type="number" v-model="config.value" :class="['form-control']">
-                                <!--<has-error :form="form" field="name"></has-error>-->
-                            </div>
-                        </template>
-
-                        <template v-else-if="config.type === 'file'">
-                            <div class="form-group col-md-3">
-                                <label for="input">Value</label>
-                                <input type="file" :class="['form-control']" @change="onSelectConfigFile($event, index)">
-                                <!--<has-error :form="form" field="name"></has-error>-->
-                            </div>
-                        </template>
-
-                        <template v-else>
-                            <div class="form-group col-md-3">
-                                <label for="input">Value</label>
-                                <input-tag placeholder="Enter..." v-model="config.value" :limit="10"></input-tag>
-                                <!--<has-error :form="form" field="name"></has-error>-->
-                            </div>
-                        </template>
-
-                        <div class="form-group col-md-2">
-                            <label for="input">Cho phép sửa</label>
-                            <div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio":value="true" v-model="config.is_edit">
-                                    <label class="form-check-label" :for="`is_edit_${index}`">Có</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" :value="false" v-model="config.is_edit">
-                                    <label class="form-check-label" :for="`is_edit_${index}`">Không</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label for="input">Action</label>
-                            <div>
-                                <button class="btn btn-sm btn-danger" @click="removeConfig(index)">Xóa</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button class="btn btn-info" @click="addConfig()">Thêm config</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -300,7 +226,7 @@ export default {
         },
 
         saveForm () {
-            this.form.configs = JSON.stringify(this.configs);
+            //this.form.configs = JSON.stringify(this.configs);
             this.form.submit('post', '/admin/sources', {
                 transformRequest: [function (data, headers) {
                     return window.objectToFormData.serialize(data)
@@ -357,7 +283,7 @@ export default {
 
         },
         edit (id) {
-            this.form.configs = JSON.stringify(this.configs);
+            //this.form.configs = JSON.stringify(this.configs);
             this.form.submit('post', '/admin/sources/'+id, {
                 transformRequest: [function (data, headers) {
                     return window.objectToFormData.serialize(data)

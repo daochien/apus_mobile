@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 use App\Helpers\FileHelper;
 use App\Models\Source;
 use App\Models\SourceConfig;
+use App\Models\SourceConfigItem;
 use App\Repositories\Source\SourceRepositoryInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\DB;
@@ -143,7 +144,7 @@ class SourceService
     public function exportConfig($id, &$msg = '')
     {
         try {
-            $source = $this->sourceRepo->findById($id);
+            $source = $this->sourceRepo->with('configs.items')->findById($id);
             if (!$source) {
                 throw new \Exception('Không tìm thấy thông tin source mẫu');
             }
@@ -151,12 +152,25 @@ class SourceService
             if (!empty($source->configs)) {
                 $configs = [];
                 foreach ($source->configs as $config) {
-                    if ($config->type == SourceConfig::TYPE_FILE) {
-                        $value = FileHelper::getLink($config->value, SourceConfig::DIR_UPLOAD_FILE);
-                    } else if (in_array($config->type, [SourceConfig::TYPE_RADIO, SourceConfig::TYPE_CHECKBOX])) {
-                        $value = json_decode($config->value, true);
+                    if ($config->is_group == SourceConfig::IS_GROUP) {
+                        $value = [];
+                        foreach ($config->items as $item) {
+                            if ($item->type == SourceConfig::TYPE_FILE) {
+                                $value[] = FileHelper::getLink($item->value, SourceConfigItem::DIR_UPLOAD_FILE);
+                            } else if (in_array($item->type, [SourceConfigItem::TYPE_RADIO, SourceConfigItem::TYPE_CHECKBOX])) {
+                                $value[] = json_decode($item->value, true);
+                            } else {
+                                $value[] = $item->value;
+                            }
+                        }
                     } else {
-                        $value = $config->value;
+                        if ($config->type == SourceConfig::TYPE_FILE) {
+                            $value = FileHelper::getLink($config->value, SourceConfig::DIR_UPLOAD_FILE);
+                        } else if (in_array($config->type, [SourceConfig::TYPE_RADIO, SourceConfig::TYPE_CHECKBOX])) {
+                            $value = json_decode($config->value, true);
+                        } else {
+                            $value = $config->value;
+                        }
                     }
 
                     $configs[$config->key] = $value;
@@ -169,7 +183,6 @@ class SourceService
             }
             return false;
         } catch (\Exception $e) {
-            dd($e);
             $msg = $e->getMessage();
             return false;
         }

@@ -30,13 +30,12 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::prefix('source-configs')->group(function() {
-        Route::get('', [SourceConfigController::class, 'index'])->name('admin.sources.index');
-        Route::post('', [SourceConfigController::class, 'store'])->name('admin.sources.store');
-        Route::get('create', [SourceConfigController::class, 'create'])->name('admin.sources.create');
-        Route::get('{id}', [SourceConfigController::class, 'edit'])->name('admin.sources.edit');
-        Route::post('{id}', [SourceConfigController::class, 'update'])->name('admin.sources.update');
-        Route::delete('{id}', [SourceConfigController::class, 'destroy'])->name('admin.sources.destroy');
-        Route::post('export/{id}', [SourceConfigController::class, 'export'])->name('admin.sources.export');
+        Route::get('', [SourceConfigController::class, 'index'])->name('admin.source_configs.index');
+        Route::post('', [SourceConfigController::class, 'store'])->name('admin.source_configs.store');
+        Route::get('create', [SourceConfigController::class, 'create'])->name('admin.source_configs.create');
+        Route::get('{id}', [SourceConfigController::class, 'edit'])->name('admin.source_configs.edit');
+        Route::post('{id}', [SourceConfigController::class, 'update'])->name('admin.source_configs.update');
+        Route::delete('{id}', [SourceConfigController::class, 'destroy'])->name('admin.source_configs.destroy');
     });
 
     Route::prefix('packages')->group(function() {

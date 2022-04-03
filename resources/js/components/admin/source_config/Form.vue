@@ -132,7 +132,7 @@
                                             </td>
                                             <td>
                                                 <template v-if="item.type === 'checkbox' || item.type === 'radio'">
-                                                    <input-tag :before-adding="beforeAddTag" placeholder="Enter..." v-model="item.value" :limit="10"></input-tag>
+                                                    <input-tag placeholder="Enter..." v-model="item.value" :limit="10"></input-tag>
                                                 </template>
                                                 <template v-else-if="item.type === 'file'">
                                                     <div class="form-group col-md-3">
@@ -177,7 +177,7 @@
 const img_link ="/images/no_image.jpg";
 
 export default {
-    props: ['editModel', 'sources'],
+    props: ['editModel', 'sources', 'config'],
     data () {
         return {
             form: new Form({
@@ -198,7 +198,7 @@ export default {
     },
     created () {
         if (this.editModel) {
-            this.loadEdit(this.source);
+            this.loadEdit(this.config);
         }
     },
     methods: {
@@ -308,7 +308,7 @@ export default {
                         icon: 'success',
                         title: 'Tạo mới source mẫu thành công'
                     });
-                    window.location.href = '/admin/packages';
+                    window.location.href = '/admin/source-configs';
                 } else {
                     Toast.fire({
                         icon: 'error',
@@ -323,16 +323,17 @@ export default {
             });
             })
         },
-        loadEdit (source) {
+        loadEdit (config) {
             let that = this;
-            this.form.id = source.id;
-            this.form.name = source.name;
-            this.form.desc = source.desc;
-            this.form.status = source.status;
-            this.avatarPreview = source.avatar ? source.avatar : img_link;
-            if (source.configs.length > 0) {
-                this.configs = [];
-                source.configs.forEach((item) => {
+            this.form.id = config.id;
+            this.form.key = config.key;
+            this.form.source_id = config.source_id;
+            this.form.is_group = config.is_group;
+            this.form.type = config.type;
+            this.avatarPreview = config.image ? config.image : img_link;
+            if (config.items.length > 0 && config.is_group == 1) {
+                this.configItems = [];
+                config.items.forEach((item) => {
                     let value = '';
                     if (item.type === 'radio' || item.type === 'checkbox') {
                         value = JSON.parse(item.value);
@@ -341,7 +342,7 @@ export default {
                     } else {
                         value = item.value;
                     }
-                    that.configs.push({
+                    that.configItems.push({
                         'id': item.id,
                         'key': item.key,
                         'type': item.type,
@@ -349,12 +350,22 @@ export default {
                         'is_edit': item.is_edit == 1? true: false
                     })
                 })
+            } else {
+                let value;
+                if (config.type === 'radio' || config.type === 'checkbox') {
+                    value = JSON.parse(config.value);
+                } else if (config.type === 'file') {
+                    value = '';
+                } else {
+                    value = config.value;
+                }
+                this.form.value = value;
             }
 
         },
         edit (id) {
-            this.form.configs = JSON.stringify(this.configs);
-            this.form.submit('post', '/admin/packages/'+id, {
+            this.form.config_items = JSON.stringify(this.configItems);
+            this.form.submit('post', '/admin/source-configs/'+id, {
                 transformRequest: [function (data, headers) {
                     return window.objectToFormData.serialize(data)
                 }],
@@ -368,7 +379,7 @@ export default {
                     });
 
                     if (data.status)
-                        window.location.href = '/admin/packages';
+                        window.location.href = '/admin/source-configs';
 
                 }).catch((error) => {
                 Toast.fire({
