@@ -38,7 +38,7 @@
                                 <td>{{ item.code }}</td>
                                 <td>{{ item.name }}</td>
                                 <td>
-                                    {{ item.path }}
+                                    {{ item.price | numberFormat }}
                                 </td>
                                 <td>
                                     <span v-if="item.status" class="label label-sm bg-success text-white mr-1">

@@ -72921,7 +72921,7 @@ var render = function () {
                       _c("td", [
                         _vm._v(
                           "\n                                " +
-                            _vm._s(item.path) +
+                            _vm._s(_vm._f("numberFormat")(item.price)) +
                             "\n                            "
                         ),
                       ]),
