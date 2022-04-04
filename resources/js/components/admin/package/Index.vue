@@ -50,7 +50,7 @@
                                 </td>
 
                                 <td>
-                                    <a :href="`/admin/sources/${item.id}`" type="button" class="btn btn-info btn-sm ">
+                                    <a :href="`/admin/packages/${item.id}`" type="button" class="btn btn-info btn-sm ">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <button type="button" class="btn btn-danger btn-sm " @click="destroy(item.id)">

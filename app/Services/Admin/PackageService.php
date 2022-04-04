@@ -69,25 +69,83 @@ class PackageService
         }
     }
 
+    public function update($id, $attributes, &$msg = '')
+    {
+        DB::beginTransaction();
+        try {
+
+            $package = $this->packageRepo->findById($id);
+            if (!$package) {
+                throw new \Exception('Không tìm thấy thông tin package');
+            }
+
+            if (!empty($attributes['avatar'])) {
+                $file = $attributes['avatar'];
+                $image = $this->fileHelper->saveFile($file, $file->getClientOriginalName(), Package::DIR_UPLOAD);
+
+                if (!$image) {
+                    throw new \Exception('Upload ảnh đại diện thất bại');
+                }
+
+                $package->avatar = $image;
+            }
+
+            if (!empty($attributes['configs'])) {
+                $configs = $this->_transformDataConfigs($attributes['configs']);
+                $package->configs = json_encode($configs);
+            }
+
+            DB::commit();
+            return $package->save();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $msg = $e->getMessage();
+            return false;
+        }
+    }
+
     protected function _transformDataConfigs($configs)
     {
         $newConfigs = [];
+
         foreach ($configs as $conf) {
-            if (in_array($conf['type'], [SourceConfig::TYPE_CHECKBOX, SourceConfig::TYPE_RADIO])) {
-                $oldValue = json_decode($conf['value'], true);
-            } else {
-                $oldValue = $conf['value'];
+            $dataItem = $this->_formatConfig($conf);
+            if ($conf['is_group'] == SourceConfig::IS_GROUP) {
+                foreach ($conf['items'] as $item) {
+                    $dataItem['items'][] = $this->_formatConfig($item);
+                }
             }
-            $newConfigs[] = [
-                'id' => $conf['id'],
-                'key' => $conf['key'],
-                'type' => $conf['type'],
-                'value' => $conf['new_value'],
-                'old_value' => $oldValue,
-                'is_edit' => $conf['is_edit'],
-            ];
+
+            $newConfigs[] = $dataItem;
+        }
+        return $newConfigs;
+    }
+
+    protected function _formatConfig($config)
+    {
+        $item = [
+            'id' => $config['id'],
+            'key' => $config['key'],
+            'type' => $config['type'],
+            'is_edit' => $config['is_edit'],
+        ];
+        if (isset($config['is_group']) && $config['is_group'] == SourceConfig::IS_GROUP) {
+            $item['is_group'] = SourceConfig::IS_GROUP;
         }
 
-        return $newConfigs;
+        if (in_array($config['type'], [SourceConfig::TYPE_CHECKBOX, SourceConfig::TYPE_RADIO])) {
+            $oldValue = json_decode($config['value'], true);
+            $value = isset($config['new_value']) ? $config['new_value']: json_decode($config['value'], true);
+        } else if ($config['type'] == SourceConfig::TYPE_FILE) {
+            $oldValue = FileHelper::getLink($config['value'], SourceConfig::PATH_GET_FILE);
+            $value = $oldValue;
+        } else {
+            $oldValue = $config['value'];
+            $value = $config['value'];
+        }
+        $item['old_value'] = $oldValue;
+        $item['value'] = $value;
+        return $item;
     }
 }

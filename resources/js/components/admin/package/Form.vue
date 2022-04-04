@@ -65,15 +65,16 @@
                         <has-error :form="form" field="desc"></has-error>
                     </div>
 
-                    <div class="form-group">
-                        <label for="input">Chọn source mẫu(*)</label>
-                        <select @change="loadConfigs()" v-model="form.source_id" :class="['form-control', { 'is-invalid': form.errors.has('source_id') }]">
-                            <option value="">--Chọn--</option>
-                            <option v-for="(item, index) in sources" :value="item.id" :key="index">{{ item.name }}</option>
-                        </select>
-                        <has-error :form="form" field="source_id"></has-error>
-                    </div>
+
                     <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="input">Chọn source mẫu(*)</label>
+                            <select @change="loadConfigs()" v-model="form.source_id" :class="['form-control', { 'is-invalid': form.errors.has('source_id') }]">
+                                <option value="">--Chọn--</option>
+                                <option v-for="(item, index) in sources" :value="item.id" :key="index">{{ item.name }}</option>
+                            </select>
+                            <has-error :form="form" field="source_id"></has-error>
+                        </div>
                         <div class="form-group col-md-4">
                             <label for="input">Chọn config</label>
                             <select v-model="itemConfigSelected" :class="['form-control']">
@@ -84,57 +85,9 @@
                         <div class="form-group col-md-4">
                             <label for="input">Action</label>
                             <div>
-                                <button class="btn btn-sm btn-warning" @click="addItem()">Chọn</button>
+                                <button class="btn btn-sm btn-warning" @click="addItem()"> Chọn</button>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row">
-<!--
-                            <table class="table ">
-                               <thead>-->
-<!--                                <tr style="font-size:13px;">-->
-<!--                                    <th class="border-top-0" scope="col">Key</th>-->
-<!--                                    <th class="border-top-0" scope="col">Type</th>-->
-<!--                                    <th class="border-top-0" scope="col">Can Edit</th>-->
-<!--                                    <th class="border-top-0" scope="col">Old Value</th>-->
-<!--                                    <th class="border-top-0" scope="col">New Value</th>-->
-<!--                                    <th class="border-top-0" scope="col">Tác vụ</th>-->
-<!--                                </tr>-->
-<!--                                </thead>-->
-<!--                                <tbody>-->
-<!--                                <tr v-for="(item, index) in packageConfigs" :key="index">-->
-<!--                                    <td>-->
-<!--                                        {{ item.key }}-->
-<!--                                    </td>-->
-<!--                                    <td>{{ item.type }}</td>-->
-<!--                                    <td>-->
-<!--                                        {{ item.is_edit ? 'Yes': 'No' }}-->
-<!--                                    </td>-->
-<!--                                    <td>-->
-<!--                                        <template v-if="item.type === 'file'">-->
-<!--                                            <img width="50" :src="item.image" alt="">-->
-<!--                                        </template>-->
-<!--                                        <template v-else>-->
-<!--                                            {{ item.value }}-->
-<!--                                        </template>-->
-<!--                                    </td>-->
-
-<!--                                    <td>-->
-<!--                                        <template v-if="item.type === 'checkbox' || item.type === 'radio'">-->
-<!--                                            <input-tag :before-adding="beforeAddTag" placeholder="Enter..." v-model="item.new_value" :limit="10"></input-tag>-->
-<!--                                        </template>-->
-<!--                                    </td>-->
-<!--                                    <td>-->
-<!--                                        <button type="button" class="btn btn-danger btn-sm " @click="removeGiftItem(index)">-->
-<!--                                            <i class="fas fa-trash-alt"></i>-->
-<!--                                        </button>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                                </tbody>-->
-<!--                            </table>-->
-
-
                     </div>
 
                 </div>
@@ -146,6 +99,7 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th class="border-top-0" scope="col"></th>
                         <th class="border-top-0" scope="col">Key</th>
                         <th class="border-top-0" scope="col">Type</th>
                         <th class="border-top-0" scope="col">Can Edit</th>
@@ -163,6 +117,11 @@
                             :key="index"
                             :id="`row${index}`" :data-target="`.row${index}`">
                             <td>
+                                <template v-if="config.is_group == 1">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </template>
+                            </td>
+                            <td>
                                 {{ config.key }}
                             </td>
                             <td>{{ config.type ? config.type: '-' }}</td>
@@ -171,7 +130,8 @@
                             </td>
                             <td>
                                 <template v-if="config.type === 'file'">
-                                    <img width="50" :src="config.image" alt="">
+                                    <img v-if="!editModel" width="50" :src="config.image" alt="">
+                                    <img v-else width="50" :src="config.value" alt="">
                                 </template>
                                 <template v-else>
                                     {{ config.value? config.value: '-' }}
@@ -191,6 +151,9 @@
                         </tr>
                         <template v-if="config.items.length > 0 && config.is_group == 1" v-for="(child, i) in config.items" >
                             <tr :class="`collapse row${index}`" :key="`child_${index}_${i}`">
+                                <td>
+                                    -
+                                </td>
                                 <td>{{ child.key }}</td>
                                 <td>{{ child.type }}</td>
                                 <td>
@@ -198,7 +161,8 @@
                                 </td>
                                 <td>
                                     <template v-if="child.type === 'file'">
-                                        <img width="50" :src="child.image" alt="">
+                                        <img v-if="!editModel" width="50" :src="child.image" alt="">
+                                        <img v-else width="50" :src="child.value" alt="">
                                     </template>
                                     <template v-else>
                                         {{ child.value? child.value: '-' }}
@@ -229,7 +193,7 @@
 const img_link ="/images/no_image.jpg";
 
 export default {
-    props: ['editModel', 'sources'],
+    props: ['editModel', 'sources', 'item'],
     data () {
         return {
             form: new Form({
@@ -249,7 +213,7 @@ export default {
     },
     created () {
         if (this.editModel) {
-            this.loadEdit(this.source);
+            this.loadEdit(this.item);
         }
     },
     methods: {
@@ -257,8 +221,11 @@ export default {
             let that = this;
             this.sources.forEach ((item) => {
                 if (item.id == that.form.source_id) {
-                    that.packageConfigs = [];
-                    that.sourceConfigs = item.configs
+                    that.sourceConfigs = item.configs;
+                    if (!that.editModel) {
+                        that.packageConfigs = [];
+                        that.packageConfigs = JSON.parse(JSON.stringify(item.configs));
+                    }
                 }
             })
         },
@@ -280,7 +247,7 @@ export default {
                                 item.new_value = item.value;
                             }
 
-                            that.packageConfigs.push(item);
+                            that.packageConfigs.push(JSON.parse(JSON.stringify(item)));
                         }
                     })
                 } else {
@@ -346,33 +313,38 @@ export default {
                 });
             })
         },
-        loadEdit (source) {
+        loadEdit (item) {
             let that = this;
-            this.form.id = source.id;
-            this.form.name = source.name;
-            this.form.desc = source.desc;
-            this.form.status = source.status;
-            this.avatarPreview = source.avatar ? source.avatar : img_link;
-            if (source.configs.length > 0) {
-                this.configs = [];
-                source.configs.forEach((item) => {
-                    let value = '';
-                    if (item.type === 'radio' || item.type === 'checkbox') {
-                        value = JSON.parse(item.value);
-                    } else if (item.type === 'file') {
-                        value = '';
-                    } else {
-                        value = item.value;
-                    }
-                    that.configs.push({
-                        'id': item.id,
-                        'key': item.key,
-                        'type': item.type,
-                        'value': value,
-                        'is_edit': item.is_edit == 1? true: false
-                    })
-                })
-            }
+            this.form.id = item.id;
+            this.form.name = item.name;
+            this.form.desc = item.desc;
+            this.form.status = item.status;
+            this.form.price = item.price;
+            this.form.source_id = item.source_id;
+            this.avatarPreview = item.avatar ? item.avatar : img_link;
+            this.loadConfigs();
+            this.packageConfigs = JSON.parse(item.configs);
+            //console.log(configs)
+            // if (package.configs.length > 0) {
+            //     this.configs = [];
+            //     package.configs.forEach((item) => {
+            //         let value = '';
+            //         if (item.type === 'radio' || item.type === 'checkbox') {
+            //             value = JSON.parse(item.value);
+            //         } else if (item.type === 'file') {
+            //             value = '';
+            //         } else {
+            //             value = item.value;
+            //         }
+            //         that.configs.push({
+            //             'id': item.id,
+            //             'key': item.key,
+            //             'type': item.type,
+            //             'value': value,
+            //             'is_edit': item.is_edit == 1? true: false
+            //         })
+            //     })
+            // }
 
         },
         edit (id) {

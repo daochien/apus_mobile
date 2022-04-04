@@ -32,7 +32,6 @@ class PackageController extends Controller
 
     public function create(Request $request)
     {
-
         $sources = Source::query()->with('configs.items')->orderBy('id', 'desc')->get();
 
         return view('admin.package.create', compact('sources'));
@@ -49,21 +48,20 @@ class PackageController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $source = $this->service->repo()->findById($id);
-        if (!$source) {
-            return response_error('Không tìm thấy thông tin source mẫu');
+        $package = $this->service->repo()->findById($id);
+
+        if (!$package) {
+            return response_error('Không tìm thấy thông tin package');
         }
-
-        $source->load('configs');
-
-        return view('admin.source.edit', compact('source'));
+        $sources = Source::query()->with('configs.items')->orderBy('id', 'desc')->get();
+        return view('admin.package.edit', compact('package', 'sources'));
     }
 
     public function update(UpdateRequest $request, $id)
     {
         $update = $this->service->update($id, $request->all());
         if (!$update) {
-            return response_error('Cập nhật source mẫu không thành công');
+            return response_error('Cập nhật package không thành công');
         }
 
         return response_success('success');
