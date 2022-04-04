@@ -5592,30 +5592,38 @@ var img_link = "/images/no_image.jpg";
       this.form.source_id = item.source_id;
       this.avatarPreview = item.avatar ? item.avatar : img_link;
       this.loadConfigs();
-      this.packageConfigs = JSON.parse(item.configs); //console.log(configs)
-      // if (package.configs.length > 0) {
-      //     this.configs = [];
-      //     package.configs.forEach((item) => {
-      //         let value = '';
-      //         if (item.type === 'radio' || item.type === 'checkbox') {
-      //             value = JSON.parse(item.value);
-      //         } else if (item.type === 'file') {
-      //             value = '';
-      //         } else {
-      //             value = item.value;
-      //         }
-      //         that.configs.push({
-      //             'id': item.id,
-      //             'key': item.key,
-      //             'type': item.type,
-      //             'value': value,
-      //             'is_edit': item.is_edit == 1? true: false
-      //         })
-      //     })
-      // }
+      var configs = JSON.parse(item.configs);
+      var items = [];
+      configs.forEach(function (config) {
+        var item = {};
+        item.id = config.id;
+        item.key = config.key;
+        item.type = config.type;
+        item.is_edit = config.is_edit;
+        item.value = config.old_value;
+        item.new_value = config.value;
+        item.is_group = config.is_group;
+        item.items = [];
+
+        if (config.is_group && config.items.length > 0) {
+          config.items.forEach(function (ite) {
+            item.items.push({
+              id: ite.id,
+              key: ite.key,
+              type: ite.type,
+              is_edit: ite.is_edit,
+              value: ite.type == 'checkbox' || ite.type == 'radio' ? ite.old_value : ite.value,
+              new_value: ite.value
+            });
+          });
+        }
+
+        items.push(item);
+      });
+      this.packageConfigs = items;
     },
     edit: function edit(id) {
-      this.form.configs = JSON.stringify(this.configs);
+      this.form.configs = JSON.stringify(this.packageConfigs);
       this.form.submit('post', '/admin/packages/' + id, {
         transformRequest: [function (data, headers) {
           return window.objectToFormData.serialize(data);
@@ -6284,7 +6292,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-//
 //
 //
 //
@@ -75107,17 +75114,8 @@ var render = function () {
                                       ? [
                                           _c(
                                             "div",
-                                            {
-                                              staticClass:
-                                                "form-group col-md-3",
-                                            },
+                                            { staticClass: "form-group" },
                                             [
-                                              _c(
-                                                "label",
-                                                { attrs: { for: "input" } },
-                                                [_vm._v("Value")]
-                                              ),
-                                              _vm._v(" "),
                                               _c("input", {
                                                 class: ["form-control"],
                                                 attrs: { type: "file" },
@@ -88087,7 +88085,7 @@ var regionDayMap = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"_from":"axios@^0.21","_id":"axios@0.21.4","_inBundle":false,"_integrity":"sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==","_location":"/axios","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"axios@^0.21","name":"axios","escapedName":"axios","rawSpec":"^0.21","saveSpec":null,"fetchSpec":"^0.21"},"_requiredBy":["#DEV:/"],"_resolved":"https://registry.npmjs.org/axios/-/axios-0.21.4.tgz","_shasum":"c67b90dc0568e5c1cf2b0b858c43ba28e2eda575","_spec":"axios@^0.21","_where":"D:\\\\OpenServer\\\\domains\\\\mobile-builder","author":{"name":"Matt Zabriskie"},"browser":{"./lib/adapters/http.js":"./lib/adapters/xhr.js"},"bugs":{"url":"https://github.com/axios/axios/issues"},"bundleDependencies":false,"bundlesize":[{"path":"./dist/axios.min.js","threshold":"5kB"}],"dependencies":{"follow-redirects":"^1.14.0"},"deprecated":false,"description":"Promise based HTTP client for the browser and node.js","devDependencies":{"coveralls":"^3.0.0","es6-promise":"^4.2.4","grunt":"^1.3.0","grunt-banner":"^0.6.0","grunt-cli":"^1.2.0","grunt-contrib-clean":"^1.1.0","grunt-contrib-watch":"^1.0.0","grunt-eslint":"^23.0.0","grunt-karma":"^4.0.0","grunt-mocha-test":"^0.13.3","grunt-ts":"^6.0.0-beta.19","grunt-webpack":"^4.0.2","istanbul-instrumenter-loader":"^1.0.0","jasmine-core":"^2.4.1","karma":"^6.3.2","karma-chrome-launcher":"^3.1.0","karma-firefox-launcher":"^2.1.0","karma-jasmine":"^1.1.1","karma-jasmine-ajax":"^0.1.13","karma-safari-launcher":"^1.0.0","karma-sauce-launcher":"^4.3.6","karma-sinon":"^1.0.5","karma-sourcemap-loader":"^0.3.8","karma-webpack":"^4.0.2","load-grunt-tasks":"^3.5.2","minimist":"^1.2.0","mocha":"^8.2.1","sinon":"^4.5.0","terser-webpack-plugin":"^4.2.3","typescript":"^4.0.5","url-search-params":"^0.10.0","webpack":"^4.44.2","webpack-dev-server":"^3.11.0"},"homepage":"https://axios-http.com","jsdelivr":"dist/axios.min.js","keywords":["xhr","http","ajax","promise","node"],"license":"MIT","main":"index.js","name":"axios","repository":{"type":"git","url":"git+https://github.com/axios/axios.git"},"scripts":{"build":"NODE_ENV=production grunt build","coveralls":"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js","examples":"node ./examples/server.js","fix":"eslint --fix lib/**/*.js","postversion":"git push && git push --tags","preversion":"npm test","start":"node ./sandbox/server.js","test":"grunt test","version":"npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json"},"typings":"./index.d.ts","unpkg":"dist/axios.min.js","version":"0.21.4"}');
+module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"Promise based HTTP client for the browser and node.js","main":"index.js","scripts":{"test":"grunt test","start":"node ./sandbox/server.js","build":"NODE_ENV=production grunt build","preversion":"npm test","version":"npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json","postversion":"git push && git push --tags","examples":"node ./examples/server.js","coveralls":"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js","fix":"eslint --fix lib/**/*.js"},"repository":{"type":"git","url":"https://github.com/axios/axios.git"},"keywords":["xhr","http","ajax","promise","node"],"author":"Matt Zabriskie","license":"MIT","bugs":{"url":"https://github.com/axios/axios/issues"},"homepage":"https://axios-http.com","devDependencies":{"coveralls":"^3.0.0","es6-promise":"^4.2.4","grunt":"^1.3.0","grunt-banner":"^0.6.0","grunt-cli":"^1.2.0","grunt-contrib-clean":"^1.1.0","grunt-contrib-watch":"^1.0.0","grunt-eslint":"^23.0.0","grunt-karma":"^4.0.0","grunt-mocha-test":"^0.13.3","grunt-ts":"^6.0.0-beta.19","grunt-webpack":"^4.0.2","istanbul-instrumenter-loader":"^1.0.0","jasmine-core":"^2.4.1","karma":"^6.3.2","karma-chrome-launcher":"^3.1.0","karma-firefox-launcher":"^2.1.0","karma-jasmine":"^1.1.1","karma-jasmine-ajax":"^0.1.13","karma-safari-launcher":"^1.0.0","karma-sauce-launcher":"^4.3.6","karma-sinon":"^1.0.5","karma-sourcemap-loader":"^0.3.8","karma-webpack":"^4.0.2","load-grunt-tasks":"^3.5.2","minimist":"^1.2.0","mocha":"^8.2.1","sinon":"^4.5.0","terser-webpack-plugin":"^4.2.3","typescript":"^4.0.5","url-search-params":"^0.10.0","webpack":"^4.44.2","webpack-dev-server":"^3.11.0"},"browser":{"./lib/adapters/http.js":"./lib/adapters/xhr.js"},"jsdelivr":"dist/axios.min.js","unpkg":"dist/axios.min.js","typings":"./index.d.ts","dependencies":{"follow-redirects":"^1.14.0"},"bundlesize":[{"path":"./dist/axios.min.js","threshold":"5kB"}]}');
 
 /***/ }),
 
@@ -88109,7 +88107,7 @@ module.exports = JSON.parse('{"version":"2021e","zones":["Africa/Abidjan|LMT GMT
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"_from":"weekstart","_id":"weekstart@1.1.0","_inBundle":false,"_integrity":"sha512-ZO3I7c7J9nwGN1PZKZeBYAsuwWEsCOZi5T68cQoVNYrzrpp5Br0Bgi0OF4l8kH/Ez7nKfxa5mSsXjsgris3+qg==","_location":"/weekstart","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"weekstart","name":"weekstart","escapedName":"weekstart","rawSpec":"","saveSpec":null,"fetchSpec":"latest"},"_requiredBy":["#USER","/"],"_resolved":"https://registry.npmjs.org/weekstart/-/weekstart-1.1.0.tgz","_shasum":"af642eb10dc24b1af9d4dcc0415056edc087b897","_spec":"weekstart","_where":"D:\\\\OpenServer\\\\domains\\\\mobile-builder","author":{"name":"Denis Sikuler"},"bugs":{"url":"https://github.com/gamtiq/weekstart/issues"},"bundleDependencies":false,"deprecated":false,"description":"Library to get first day of week.","devDependencies":{"@babel/preset-env":"^7.13.10","eslint":"^7.22.0","eslint-config-guard":"^2.0.1","ink-docstrap":"1.3.2","jest":"^26.6.3","jsdoc":"^3.6.6","jsdoc-file":"^1.0.1","microbundle":"0.4.4","version-bump-prompt":"^6.1.0"},"files":["dist","full.js","full.d.ts","index.d.ts","src","History.md"],"homepage":"https://github.com/gamtiq/weekstart","keywords":["week","start","first","day","locale","country","region"],"license":"MIT","main":"dist/commonjs/main.js","module":"dist/es-module/main.js","name":"weekstart","repository":{"type":"git","url":"git://github.com/gamtiq/weekstart.git"},"scripts":{"all":"npm run check-all && npm run doc && npm run build","build":"npm run build-umd && npm run build-commonjs && npm run build-esm && npm run build-umd-min","build-commonjs":"microbundle build \\"src/!(*.test).js\\" --output dist/commonjs --format cjs --strict --no-compress","build-esm":"microbundle build \\"src/!(*.test).js\\" --output dist/es-module --format es --no-compress","build-umd":"microbundle build src/main.js src/full.js --output dist --format umd --strict --no-compress","build-umd-min":"microbundle build src/main.js src/full.js --output dist/min --format umd --strict","check":"npm run lint && npm test","check-all":"npm run lint-all && npm test","doc":"jsdoc -c jsdoc-conf.js","lint":"eslint --cache --max-warnings 0 \\"**/*.js\\"","lint-all":"eslint --max-warnings 0 \\"**/*.js\\"","lint-all-error":"eslint \\"**/*.js\\"","lint-error":"eslint --cache \\"**/*.js\\"","release":"bump patch --commit --tag --all --push package.json package-lock.json bower.json component.json","release-major":"bump major --commit --tag --all --push package.json package-lock.json bower.json component.json","release-minor":"bump minor --commit --tag --all --push package.json package-lock.json bower.json component.json","test":"jest"},"types":"./index.d.ts","umd:main":"dist/main.js","version":"1.1.0"}');
+module.exports = JSON.parse('{"name":"weekstart","version":"1.1.0","description":"Library to get first day of week.","homepage":"https://github.com/gamtiq/weekstart","main":"dist/commonjs/main.js","module":"dist/es-module/main.js","umd:main":"dist/main.js","files":["dist","full.js","full.d.ts","index.d.ts","src","History.md"],"keywords":["week","start","first","day","locale","country","region"],"devDependencies":{"@babel/preset-env":"^7.13.10","eslint":"^7.22.0","eslint-config-guard":"^2.0.1","ink-docstrap":"1.3.2","jest":"^26.6.3","jsdoc":"^3.6.6","jsdoc-file":"^1.0.1","microbundle":"0.4.4","version-bump-prompt":"^6.1.0"},"scripts":{"lint":"eslint --cache --max-warnings 0 \\"**/*.js\\"","lint-error":"eslint --cache \\"**/*.js\\"","lint-all":"eslint --max-warnings 0 \\"**/*.js\\"","lint-all-error":"eslint \\"**/*.js\\"","test":"jest","check":"npm run lint && npm test","check-all":"npm run lint-all && npm test","doc":"jsdoc -c jsdoc-conf.js","build-commonjs":"microbundle build \\"src/!(*.test).js\\" --output dist/commonjs --format cjs --strict --no-compress","build-esm":"microbundle build \\"src/!(*.test).js\\" --output dist/es-module --format es --no-compress","build-umd":"microbundle build src/main.js src/full.js --output dist --format umd --strict --no-compress","build-umd-min":"microbundle build src/main.js src/full.js --output dist/min --format umd --strict","build":"npm run build-umd && npm run build-commonjs && npm run build-esm && npm run build-umd-min","all":"npm run check-all && npm run doc && npm run build","release":"bump patch --commit --tag --all --push package.json package-lock.json bower.json component.json","release-minor":"bump minor --commit --tag --all --push package.json package-lock.json bower.json component.json","release-major":"bump major --commit --tag --all --push package.json package-lock.json bower.json component.json"},"author":{"name":"Denis Sikuler"},"repository":{"type":"git","url":"git://github.com/gamtiq/weekstart.git"},"bugs":{"url":"https://github.com/gamtiq/weekstart/issues"},"license":"MIT","types":"./index.d.ts"}');
 
 /***/ })
 

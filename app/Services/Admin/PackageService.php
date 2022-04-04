@@ -79,6 +79,12 @@ class PackageService
                 throw new \Exception('Không tìm thấy thông tin package');
             }
 
+            $package->name = $attributes['name'];
+            $package->desc = $attributes['desc'];
+            $package->status = $attributes['status'];
+            $package->price = $attributes['price'];
+            $package->source_id = $attributes['source_id'];
+
             if (!empty($attributes['avatar'])) {
                 $file = $attributes['avatar'];
                 $image = $this->fileHelper->saveFile($file, $file->getClientOriginalName(), Package::DIR_UPLOAD);
@@ -111,7 +117,7 @@ class PackageService
 
         foreach ($configs as $conf) {
             $dataItem = $this->_formatConfig($conf);
-            if ($conf['is_group'] == SourceConfig::IS_GROUP) {
+            if (isset($conf['is_group']) && $conf['is_group'] == SourceConfig::IS_GROUP) {
                 foreach ($conf['items'] as $item) {
                     $dataItem['items'][] = $this->_formatConfig($item);
                 }
@@ -135,8 +141,9 @@ class PackageService
         }
 
         if (in_array($config['type'], [SourceConfig::TYPE_CHECKBOX, SourceConfig::TYPE_RADIO])) {
-            $oldValue = json_decode($config['value'], true);
-            $value = isset($config['new_value']) ? $config['new_value']: json_decode($config['value'], true);
+            $rawValue = !is_array($config['value']) ? json_decode($config['value'], true): $config['value'];
+            $oldValue = $rawValue;
+            $value = isset($config['new_value']) ? $config['new_value']: $rawValue;
         } else if ($config['type'] == SourceConfig::TYPE_FILE) {
             $oldValue = FileHelper::getLink($config['value'], SourceConfig::PATH_GET_FILE);
             $value = $oldValue;

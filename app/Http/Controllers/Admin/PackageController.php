@@ -59,9 +59,9 @@ class PackageController extends Controller
 
     public function update(UpdateRequest $request, $id)
     {
-        $update = $this->service->update($id, $request->all());
+        $update = $this->service->update($id, $request->all(), $msg);
         if (!$update) {
-            return response_error('Cập nhật package không thành công');
+            return response_error($msg);
         }
 
         return response_success('success');

@@ -135,8 +135,7 @@
                                                     <input-tag placeholder="Enter..." v-model="item.value" :limit="10"></input-tag>
                                                 </template>
                                                 <template v-else-if="item.type === 'file'">
-                                                    <div class="form-group col-md-3">
-                                                        <label for="input">Value</label>
+                                                    <div class="form-group">
                                                         <input type="file" :class="['form-control']" @change="onSelectConfigItemFile($event, index)">
                                                         <!--<has-error :form="form" field="name"></has-error>-->
                                                     </div>

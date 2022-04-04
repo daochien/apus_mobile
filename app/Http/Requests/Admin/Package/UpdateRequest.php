@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Requests\Admin\SourceConfigItem;
+namespace App\Http\Requests\Admin\Package;
 
-use App\Models\SourceConfig;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
@@ -24,24 +23,13 @@ class UpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
+        return [
             'source_id' => 'required|integer',
-            'key' => 'required|string|max:191',
-            'is_group' => 'required|in:0,1',
+            'name' => 'required|string',
+            'price' => 'required|integer|min:10000',
+            'avatar' => 'nullable|image|max:204800',
+            'desc' => 'nullable|string|max:500'
         ];
-
-        if ($this->is_group == SourceConfig::NOT_IS_GROUP) {
-            $rules['value'] = 'required';
-            $rules['type'] = 'required|string';
-            $rules['is_edit'] = 'required';
-        } else {
-            $rules['config_items'] = 'required|array';
-            $rules['config_items.*.key'] = 'required|string';
-            $rules['config_items.*.type'] = 'required|string';
-            //$rules['config_items.*.value'] = 'required';
-        }
-
-        return $rules;
     }
 
     public function validator($factory)
@@ -54,7 +42,7 @@ class UpdateRequest extends FormRequest
     public function sanitize()
     {
         $this->merge([
-            'config_items' => json_decode($this->input('config_items'), true)
+            'configs' => json_decode($this->input('configs'), true)
         ]);
         return $this->all();
     }

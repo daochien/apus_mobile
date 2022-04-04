@@ -323,32 +323,36 @@ export default {
             this.form.source_id = item.source_id;
             this.avatarPreview = item.avatar ? item.avatar : img_link;
             this.loadConfigs();
-            this.packageConfigs = JSON.parse(item.configs);
-            //console.log(configs)
-            // if (package.configs.length > 0) {
-            //     this.configs = [];
-            //     package.configs.forEach((item) => {
-            //         let value = '';
-            //         if (item.type === 'radio' || item.type === 'checkbox') {
-            //             value = JSON.parse(item.value);
-            //         } else if (item.type === 'file') {
-            //             value = '';
-            //         } else {
-            //             value = item.value;
-            //         }
-            //         that.configs.push({
-            //             'id': item.id,
-            //             'key': item.key,
-            //             'type': item.type,
-            //             'value': value,
-            //             'is_edit': item.is_edit == 1? true: false
-            //         })
-            //     })
-            // }
-
+            let configs = JSON.parse(item.configs);
+            let items = [];
+            configs.forEach(config => {
+                let item = {};
+                item.id = config.id;
+                item.key = config.key;
+                item.type = config.type;
+                item.is_edit = config.is_edit;
+                item.value = config.old_value;
+                item.new_value = config.value;
+                item.is_group = config.is_group;
+                item.items = [];
+                if (config.is_group && config.items.length > 0) {
+                    config.items.forEach(ite => {
+                        item.items.push({
+                            id: ite.id,
+                            key: ite.key,
+                            type: ite.type,
+                            is_edit: ite.is_edit,
+                            value: (ite.type == 'checkbox' || ite.type == 'radio') ? ite.old_value : ite.value,
+                            new_value: ite.value
+                        })
+                    })
+                }
+                items.push(item)
+            })
+            this.packageConfigs = items;
         },
         edit (id) {
-            this.form.configs = JSON.stringify(this.configs);
+            this.form.configs = JSON.stringify(this.packageConfigs);
             this.form.submit('post', '/admin/packages/'+id, {
                 transformRequest: [function (data, headers) {
                     return window.objectToFormData.serialize(data)
