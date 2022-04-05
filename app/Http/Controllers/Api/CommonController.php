@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\FileHelper;
 use App\Http\Controllers\Controller;
+use App\Models\AppCustomer;
 use App\Models\Source;
 use App\Models\SourceConfig;
 use App\Models\SourceConfigItem;
@@ -50,6 +51,35 @@ class CommonController extends Controller
             'status' => true,
             'message' => 'success',
             'app_config' => $configs
+        ]);
+    }
+
+    public function appCustomerInfo($code)
+    {
+        $app = AppCustomer::query()->where('code', $code)->first();
+        if (!$app) {
+            return response_error('app customer not found!');
+        }
+
+        $configs = json_decode($app->configs, true);
+        $data = [];
+        foreach($configs as $config) {
+
+            if ($config['is_group'] == 1) {
+                foreach ($config['items'] as $item) {
+                    //$child[$item['key']] = $item['value'];
+                    $data[$config['key']][$item['key']] = $item['value'];
+                }
+            } else {
+                $data[$config['key']] = $config['value'];
+            }
+
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'success',
+            'app_config' => $data
         ]);
     }
 }

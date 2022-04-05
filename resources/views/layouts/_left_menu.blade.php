@@ -35,4 +35,11 @@
         </a>
     </li>
 
+    <li {!! (Request::is('app-customers') ? 'class="active"' : '' ) !!}>
+        <a href="{{ route('admin.app_customer.index') }}">
+            <i class="livicon" data-name="dashboard" data-size="18" data-c="#418BCA" data-hc="#418BCA" data-loop="true"></i>
+            <span class="title">Quản lý app khách hàng</span>
+        </a>
+    </li>
+
 </ul>

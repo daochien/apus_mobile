@@ -42,7 +42,9 @@ class AppCustomerService
     protected function _transformDataConfigs($configs)
     {
         $data = [];
-        foreach ($configs as $config) {
+
+        foreach ($configs as $i => $config) {
+            $item = [];
             $item['key'] = $config['key'];
             $item['type'] = $config['type'];
             $item['is_edit'] = $config['is_edit'];
@@ -57,9 +59,11 @@ class AppCustomerService
                         'value' => $child['new_value']
                     ];
                 }
+
             }
             $data[] = $item;
         }
+
         return $data;
     }
 }

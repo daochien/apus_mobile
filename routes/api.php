@@ -21,4 +21,5 @@ use App\Http\Controllers\Api\CommonController;
 
 Route::prefix('v1')->group(function() {
     Route::get('config/{code}', [CommonController::class, 'getConfig'])->name('api.v1.config');
+    Route::get('app-customer/{code}', [CommonController::class, 'appCustomerInfo'])->name('api.v1.appCustomerInfo');
 });

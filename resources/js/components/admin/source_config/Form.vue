@@ -216,7 +216,7 @@ export default {
                     })
                         .then(({data}) => {
                             if (data.status) {
-                                this.form.value = data.data.file_name;
+                                this.form.value = data.data.path;
                             } else {
                                 Toast.fire({
                                     icon: 'error',
@@ -255,7 +255,7 @@ export default {
                     })
                         .then(({data}) => {
                             if (data.status) {
-                                this.configItems[index].value = data.data.file_name;
+                                this.configItems[index].value = data.data.path;
                             } else {
                                 Toast.fire({
                                     icon: 'error',
