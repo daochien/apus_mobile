@@ -30,4 +30,8 @@ Vue.component(
     require("./components/admin/package/Index").default
 );
 
+Vue.component(
+    "admin-app-customer-form",
+    require("./components/admin/app_customer/Form").default
+);
 

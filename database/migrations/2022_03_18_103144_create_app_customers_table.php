@@ -15,12 +15,12 @@ class CreateAppCustomersTable extends Migration
     {
         Schema::create('app_customers', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 20)->unique();
+            $table->string('code', 20)->unique()->nullable();
             $table->string('customer_name');
             $table->string('customer_phone');
             $table->string('customer_email')->nullable();
             $table->integer('package_id');
-            $table->integer('source_id');
+            $table->integer('source_id')->nullable();
             $table->dateTime('expired')->nullable();
             $table->text('configs')->nullable();
             $table->string('path')->nullable();

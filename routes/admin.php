@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\SourceController;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\SourceConfigController;
+use App\Http\Controllers\Admin\AppCustomerController;
 
 Route::get('login', [AuthController::class, 'login'])->name('admin.login');
 Route::post('sign-in', [AuthController::class, 'signIn'])->name('admin.signIn');
@@ -45,6 +46,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('{id}', [PackageController::class, 'edit'])->name('admin.packages.edit');
         Route::post('{id}', [PackageController::class, 'update'])->name('admin.packages.update');
         Route::delete('{id}', [PackageController::class, 'destroy'])->name('admin.packages.destroy');
+    });
+
+    Route::prefix('app-customers')->group(function() {
+        Route::get('', [AppCustomerController::class, 'index'])->name('admin.app_customer.index');
+        Route::post('', [AppCustomerController::class, 'store'])->name('admin.app_customer.store');
+        Route::get('create', [AppCustomerController::class, 'create'])->name('admin.app_customer.create');
+        Route::get('{id}', [AppCustomerController::class, 'edit'])->name('admin.app_customer.edit');
+        Route::post('{id}', [AppCustomerController::class, 'update'])->name('admin.app_customer.update');
+        Route::delete('{id}', [AppCustomerController::class, 'destroy'])->name('admin.app_customer.destroy');
     });
 
 });

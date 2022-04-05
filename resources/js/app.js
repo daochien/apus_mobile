@@ -49,7 +49,6 @@ import InputTag from 'vue-input-tag';
 
 Vue.component('input-tag', InputTag);
 
-
 const app = new Vue({
     el: '#app'
 });
