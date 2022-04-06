@@ -8,6 +8,8 @@ use App\Models\AppCustomer;
 use App\Models\Package;
 use App\Services\Admin\AppCustomerService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AppCustomerController extends Controller
 {
@@ -54,5 +56,23 @@ class AppCustomerController extends Controller
         $item->delete();
 
         return response_success('Xóa app khách hàng thành công');
+    }
+
+    public function download($code)
+    {
+        $app = AppCustomer::query()->firstWhere(['code' => $code]);
+        if (!$app) {
+            return response_error('Không tìm thấy thông tin app customer');
+        }
+
+        $path = storage_path("app/public/app_customers/{$code}.zip");
+
+        $filename = 'source_app.zip';
+
+        $headers = [
+            'Content-Disposition' => 'attachment; filename='. $filename. ';'
+        ];
+        return response()->download($path, $filename, $headers);
+
     }
 }

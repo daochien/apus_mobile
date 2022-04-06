@@ -52,9 +52,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('', [AppCustomerController::class, 'index'])->name('admin.app_customer.index');
         Route::post('', [AppCustomerController::class, 'store'])->name('admin.app_customer.store');
         Route::get('create', [AppCustomerController::class, 'create'])->name('admin.app_customer.create');
+        Route::get('download/{code}', [AppCustomerController::class, 'download'])->name('admin.app_customer.download');
         Route::get('{id}', [AppCustomerController::class, 'edit'])->name('admin.app_customer.edit');
         Route::post('{id}', [AppCustomerController::class, 'update'])->name('admin.app_customer.update');
         Route::delete('{id}', [AppCustomerController::class, 'destroy'])->name('admin.app_customer.destroy');
+
     });
 
 });

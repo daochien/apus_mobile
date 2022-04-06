@@ -26,6 +26,7 @@ class SourceConfigController extends Controller
         if ($request->wantsJson()) {
             return response_success('success', $items);
         }
+
         return view('admin.source_config.index', compact('items'));
     }
 

@@ -145,7 +145,7 @@ class PackageService
             $oldValue = $rawValue;
             $value = isset($config['new_value']) ? $config['new_value']: $rawValue;
         } else if ($config['type'] == SourceConfig::TYPE_FILE) {
-            $oldValue = FileHelper::getLink($config['value'], SourceConfig::PATH_GET_FILE);
+            $oldValue = $config['value'];
             $value = $oldValue;
         } else {
             $oldValue = $config['value'];

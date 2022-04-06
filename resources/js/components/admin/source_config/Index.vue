@@ -31,7 +31,7 @@
                                 <td>{{ item.key }}</td>
                                 <td>{{ item.is_group? 'YES': 'NO' }}</td>
                                 <td>
-                                    {{ item.source.name }}
+                                    {{ item.source?  item.source.name: '-' }}
                                 </td>
 
                                 <td>

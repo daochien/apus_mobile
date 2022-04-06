@@ -39,7 +39,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span>
+                                    <span v-if="item.package">
                                         {{ item.package.name }} <br>
                                         {{ item.package.price | numberFormat }}
                                     </span>
@@ -59,6 +59,9 @@
                                 <td>
                                     <a :href="`/admin/app-customers/${item.id}`" type="button" class="btn btn-info btn-sm ">
                                         <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a type="button" class="btn btn-info btn-sm " @click="download(item.code)">
+                                        <i class="fas fa-file-download"></i>
                                     </a>
                                     <button type="button" class="btn btn-danger btn-sm " @click="destroy(item.id)">
                                         <i class="fas fa-trash-alt"></i>
@@ -127,6 +130,9 @@ export default {
                 }
             })
         },
+        download (code) {
+            window.open('/admin/app-customers/download/'+code, '_blank');
+        }
     }
 }
 </script>
