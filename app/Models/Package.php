@@ -45,4 +45,9 @@ class Package extends Model
     {
         return !empty($value) ? FileHelper::getLink($value, self::DIR_GET_LINK) : '';
     }
+
+    public function source()
+    {
+        return $this->belongsTo(Source::class, 'source_id');
+    }
 }

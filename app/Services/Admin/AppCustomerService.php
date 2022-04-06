@@ -7,6 +7,7 @@ use App\Models\Package;
 use App\Models\SourceConfig;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AppCustomerService
 {
@@ -19,18 +20,24 @@ class AppCustomerService
         DB::beginTransaction();
         try {
 
+            $package = Package::query()->findOrFail($attributes['package_id']);
+            $package->load('source');
             $configs = $this->_transformDataConfigs($attributes['configs']);
 
             $appCus = AppCustomer::query()->create([
                 'customer_name' => $attributes['customer_name'],
                 'customer_email' => $attributes['customer_email'],
                 'customer_phone' => $attributes['customer_phone'],
-                'package_id' => $attributes['package_id'],
+                'package_id' => $package->id,
                 'status' => $attributes['status'],
                 'expired' => Carbon::parse($attributes['expired'])->toDateTimeString(),
                 'configs' => json_encode($configs)
             ]);
+
             DB::commit();
+
+            $this->_cloneSource($appCus->code, $package->source->code);
+
             return $appCus;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -65,5 +72,12 @@ class AppCustomerService
         }
 
         return $data;
+    }
+
+    protected function _cloneSource($appCode, $sourceCode)
+    {
+        $rootPath = 'sources/'.$appCode;
+        $copyPath = $sourceCode.'/';
+        Storage::copy($rootPath, $copyPath);
     }
 }
